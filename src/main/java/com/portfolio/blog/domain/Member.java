@@ -1,7 +1,7 @@
 package com.portfolio.blog.domain;
 
-import com.portfolio.blog.vo.MemberCreate;
-import com.portfolio.blog.vo.MemberUpdate;
+import com.portfolio.blog.vo.member.MemberCreate;
+import com.portfolio.blog.vo.member.MemberUpdate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

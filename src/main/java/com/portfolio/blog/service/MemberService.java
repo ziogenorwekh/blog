@@ -2,10 +2,11 @@ package com.portfolio.blog.service;
 
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.dto.MemberDto;
+import com.portfolio.blog.exception.DuplicatedEmailException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
-import com.portfolio.blog.vo.MemberCreate;
-import com.portfolio.blog.vo.MemberUpdate;
+import com.portfolio.blog.vo.member.MemberCreate;
+import com.portfolio.blog.vo.member.MemberUpdate;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ public class MemberService {
 
     @Transactional
     public Long save(MemberCreate memberCreate) {
+        validateDuplicatedEmail(memberCreate.getEmail());
         memberCreate.setPassword(passwordEncoder.encode(memberCreate.getPassword()));
         Member member = Member.create(memberCreate);
         memberRepository.save(member);
@@ -59,5 +61,12 @@ public class MemberService {
                 new MemberNotFoundException("member not in database")
         );
         memberRepository.delete(member);
+    }
+
+
+    private void validateDuplicatedEmail(String email) {
+        memberRepository.findMemberByEmail(email).ifPresent(member -> {
+            throw new DuplicatedEmailException("email duplicated");
+        });
     }
 }

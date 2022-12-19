@@ -1,14 +1,17 @@
-package com.portfolio.blog.vo;
+package com.portfolio.blog.vo.member;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
+import javax.validation.constraints.*;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 @Data
-public class MemberUpdate {
+public class MemberCreate {
+
+    @ApiModelProperty(example = "lsek@naver.com")
+    @ApiParam(value = "사용자 이메일", required = true)
+    @Email(message = "이메일 형식이어야 합니다.")
+    private String email;
 
     @ApiParam(value = "사용자 이름", required = true)
     @ApiModelProperty(example = "lsek")
@@ -20,4 +23,5 @@ public class MemberUpdate {
     @ApiModelProperty(example = "password1!")
     @Size(min = 4,message = "최소 네글자 이상의 비밀번호를 입력해주세요.")
     private String password;
+
 }

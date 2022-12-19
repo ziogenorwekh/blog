@@ -1,6 +1,7 @@
 package com.portfolio.blog.domain;
 
-import com.portfolio.blog.vo.PostCreate;
+import com.portfolio.blog.vo.post.PostCreate;
+import com.portfolio.blog.vo.post.PostUpdate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,5 +59,16 @@ public class Post {
     public void addMember(Member member) {
         this.member = member;
         member.getPosts().add(this);
+    }
+
+
+    public void update(PostUpdate postUpdate) {
+        this.title = postUpdate.getTitle();
+        this.subTitle = postUpdate.getSubTitle();
+        this.contents = postUpdate.getContents();
+    }
+
+    public void delete() {
+        this.member = null;
     }
 }

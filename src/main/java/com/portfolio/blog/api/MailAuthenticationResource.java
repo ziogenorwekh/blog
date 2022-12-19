@@ -27,9 +27,9 @@ public class MailAuthenticationResource {
     }
 
     @ApiOperation(value = "인증 번호 확인", notes = "가입한 회원에게 권한 부여")
-    @RequestMapping(value = "/mails", method = RequestMethod.POST)
+    @RequestMapping(value = "/mails/check", method = RequestMethod.POST)
     public ResponseEntity<Void> checkAuthentication(@RequestBody @Validated EmailVerify requestVo) {
-        redisAuthenticationService.verifyAuthentication(requestVo.getEmail());
+        redisAuthenticationService.verifyAuthentication(requestVo.getNumber());
         return ResponseEntity.accepted().build();
     }
 

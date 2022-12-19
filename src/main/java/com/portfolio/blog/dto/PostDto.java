@@ -10,11 +10,11 @@ import java.util.Date;
  */
 @Data
 public class PostDto implements Serializable {
-    private final Long id;
-    private final String postId;
-    private final String title;
-    private final String subTitle;
-    private final String contents;
-    private final Date postedBy;
-    private final MemberDto member;
+    private Long id;
+    private String postId;
+    private String title;
+    private String subTitle;
+    private String contents;
+    private Date postedBy;
+    private MemberDto member;
 }

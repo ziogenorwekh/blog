@@ -47,12 +47,14 @@ public class RedisAuthenticationService {
 
     @Transactional
     public void verifyAuthentication(String key) {
+
+        log.debug("verifyAuthentication :: {}",key);
         String email = redisRepo.findOne(key);
         if (email == null) {
             throw new EmailAuthenticationException("expired");
         }
         Member member = memberRepository.findMemberByEmail(email)
-                .orElseThrow(()->new MemberNotFoundException("member not in database"));
+                .orElseThrow(() -> new MemberNotFoundException("member not in database"));
         member.verified();
         redisRepo.delete(key);
     }

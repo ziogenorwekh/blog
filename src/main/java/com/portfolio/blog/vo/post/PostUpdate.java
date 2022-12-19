@@ -1,12 +1,14 @@
-package com.portfolio.blog.vo;
+package com.portfolio.blog.vo.post;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
-import javax.validation.constraints.*;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 @Data
-public class PostCreate {
+public class PostUpdate {
 
     @ApiParam(value = "글 제목")
     @ApiModelProperty(example = "제목")

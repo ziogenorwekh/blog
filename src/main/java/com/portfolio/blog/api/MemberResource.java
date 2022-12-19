@@ -4,9 +4,9 @@ import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.dto.MemberDto;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.service.MemberService;
-import com.portfolio.blog.vo.MemberCreate;
-import com.portfolio.blog.vo.MemberResponse;
-import com.portfolio.blog.vo.MemberUpdate;
+import com.portfolio.blog.vo.member.MemberCreate;
+import com.portfolio.blog.vo.member.MemberResponse;
+import com.portfolio.blog.vo.member.MemberUpdate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +22,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -51,9 +52,9 @@ public class MemberResource {
             @ApiResponse(code = 404, message = "회원 존재하지 않음")
     })
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<EntityModel> retrieveMember(@PathVariable String memberId) {
+    public ResponseEntity<EntityModel<MemberResponse>> retrieveMember(@PathVariable String memberId) {
         MemberDto memberDto = memberService.findOne(memberId);
-        EntityModel<MemberDto> model = EntityModel.of(memberDto);
+        EntityModel<MemberResponse> model = EntityModel.of(new MemberResponse(memberDto));
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(MemberResource.class).update(null, memberId, null));
         model.add(linkBuilder.withRel("delete-member"));
@@ -61,6 +62,20 @@ public class MemberResource {
 
         return ResponseEntity.ok(model);
     }
+
+    @ApiOperation(value = "회원 전체 조회", notes = "등록된 회원 전체 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원 조회 성공"),
+    })
+    @RequestMapping(value = "/members", method = RequestMethod.GET)
+    public ResponseEntity<List<MemberResponse>> retrieveAllMembers() {
+        List<MemberDto> list = memberService.findAll();
+        List<MemberResponse> collect = list.stream()
+                .map(memberDto -> new MemberResponse(memberDto)).collect(Collectors.toList());
+        return ResponseEntity.ok(collect);
+    }
+
+
 
     @ApiOperation(value = "회원 수정", notes = "회원 아이디를 통해 회원 수정")
     @ApiResponses({
@@ -70,12 +85,12 @@ public class MemberResource {
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
     @RequestMapping(value = "/members/{memberId}",method = RequestMethod.PUT)
-    public ResponseEntity<EntityModel<MemberDto>> update(@RequestBody @Validated MemberUpdate memberUpdate
+    public ResponseEntity<EntityModel<MemberResponse>> update(@RequestBody @Validated MemberUpdate memberUpdate
     , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
         this.checkAuthentication(member,memberId);
         MemberDto memberDto = memberService.update(memberUpdate, memberId);
 
-        EntityModel<MemberDto> model = EntityModel.of(memberDto);
+        EntityModel<MemberResponse> model = EntityModel.of(new MemberResponse(memberDto));
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder
                 .linkTo(WebMvcLinkBuilder.methodOn(MemberResource.class).memberService.findOne(memberId));
         model.add(linkBuilder.withRel("delete-member"));
@@ -90,7 +105,7 @@ public class MemberResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
-    @RequestMapping(value = "/members/{memberId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/members/{memberId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
         this.checkAuthentication(member,memberId);
         memberService.delete(memberId);

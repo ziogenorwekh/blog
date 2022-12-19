@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class MemberDto implements Serializable {
-    private final Long id;
-    private final String email;
-    private final String memberId;
-    private final String name;
+    private Long id;
+    private String email;
+    private String memberId;
+    private String name;
 }

@@ -1,4 +1,4 @@
-package com.portfolio.blog.vo;
+package com.portfolio.blog.vo.member;
 
 import com.portfolio.blog.dto.MemberDto;
 import io.swagger.annotations.ApiModelProperty;
