@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult)
-            throws IOException, ServletException {
+            throws IOException {
         CustomizedMemberDetails memberDetails = (CustomizedMemberDetails) authResult.getDetails();
         Token token = Token.builder()
                 .memberId(memberDetails.getMember().getMemberId())
@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException, ServletException {
+                                              AuthenticationException failed) {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.addHeader("Error", "Login Failed");

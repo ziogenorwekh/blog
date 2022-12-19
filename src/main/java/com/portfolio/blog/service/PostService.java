@@ -43,18 +43,31 @@ public class PostService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<PostDto> findAll() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> new ModelMapper().map(post, PostDto.class)).collect(Collectors.toList());
     }
 
+    @Transactional
     public PostDto update(PostUpdate postUpdate, PostSearch postSearch) {
+        Post post = this.checkOwnPost(postSearch);
+        post.update(postUpdate);
+        return new ModelMapper().map(post, PostDto.class);
+    }
+
+    @Transactional
+    public void delete(PostSearch postSearch) {
+        Post post = this.checkOwnPost(postSearch);
+        postRepository.delete(post);
+    }
+
+    private Post checkOwnPost(PostSearch postSearch) {
         Post post = postRepository.findPostByPostId(postSearch.getPostId())
                 .orElseThrow(() -> new PostNotFoundException("post not in database"));
         if (post.getMember().getMemberId().equals(postSearch.getMemberId())) {
             throw new UnAuthenticationAccessException("this post is not your");
         }
-        post.update(postUpdate);
-        return new ModelMapper().map(post, PostDto.class);
+        return post;
     }
 }

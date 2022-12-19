@@ -41,7 +41,7 @@ public class MemberResource {
     })
     @RequestMapping(value = "/members", method = RequestMethod.POST)
     public ResponseEntity<URI> create(@RequestBody @Validated MemberCreate memberCreate) {
-        Long id = memberService.save(memberCreate);
+        String id = memberService.save(memberCreate);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
     }

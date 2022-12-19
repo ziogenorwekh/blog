@@ -23,12 +23,12 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Long save(MemberCreate memberCreate) {
+    public String save(MemberCreate memberCreate) {
         validateDuplicatedEmail(memberCreate.getEmail());
         memberCreate.setPassword(passwordEncoder.encode(memberCreate.getPassword()));
         Member member = Member.create(memberCreate);
         memberRepository.save(member);
-        return member.getId();
+        return member.getMemberId();
     }
 
     @Transactional(readOnly = true)
@@ -60,6 +60,7 @@ public class MemberService {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database")
         );
+        member.delete();
         memberRepository.delete(member);
     }
 

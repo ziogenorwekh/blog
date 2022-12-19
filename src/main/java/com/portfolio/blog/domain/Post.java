@@ -29,6 +29,9 @@ public class Post {
 
     private String contents;
 
+    @Enumerated(value = EnumType.STRING)
+    private Category category;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date postedBy;
@@ -38,11 +41,12 @@ public class Post {
     private Member member;
 
     @Builder
-    public Post(String title, String subTitle, String contents) {
+    public Post(String title, String subTitle, String contents,Category category) {
         this.postId = UUID.randomUUID().toString();
         this.title = title;
         this.subTitle = subTitle;
         this.contents = contents;
+        this.category = category;
     }
 
     // Business Logic
@@ -51,6 +55,7 @@ public class Post {
                 .title(postCreate.getTitle())
                 .subTitle(postCreate.getSubTitle())
                 .contents(postCreate.getContents())
+                .category(postCreate.getCategory())
                 .build();
         post.addMember(member);
         return post;
