@@ -2,4 +2,4 @@
 포트폴리오 올릴 블로그용
 
 <h1>사용함</h1>
-<h3>jwt, aws S3, aws ec2, aws rds, aws redis</h3>
+<h3>jwt, aws S3, aws ec2, aws rds, aws redis, security, REST API, jpa, swagger</h3>
