@@ -20,16 +20,15 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.portfoilo.blog"))
-                .paths(PathSelectors.ant("/api/**"))
-                .paths(PathSelectors.ant("/auth/**"))
+                .apis(RequestHandlerSelectors.basePackage("com.portfolio.blog"))
+                .paths(PathSelectors.ant("/**"))
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Rest Api Docs")
-                .description("description api")
+                .description("blog api")
                 .version("1.0.0")
                 .build();
     }

@@ -27,7 +27,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -67,7 +66,7 @@ public class PostResource {
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).update(null, postId, null));
         model.add(linkTo.withRel("update-post"));
         model.add(linkTo.withRel("delete-post"));
-        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse, model, linkTo);
+        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse);
         return ResponseEntity.ok().body(jacksonValue);
     }
 
@@ -104,8 +103,7 @@ public class PostResource {
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrievePost(postId));
         model.add(linkTo.withRel("search-post"));
         model.add(linkTo.withRel("delete-post"));
-        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse, model, linkTo);
-
+        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse);
 
         return ResponseEntity.accepted().body(jacksonValue);
     }
@@ -122,7 +120,7 @@ public class PostResource {
         return ResponseEntity.ok().build();
     }
 
-    private MappingJacksonValue getMappingJacksonValue(PostResponse postResponse, EntityModel<PostResponse> model, WebMvcLinkBuilder linkTo) {
+    private MappingJacksonValue getMappingJacksonValue(PostResponse postResponse) {
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
                 .filterOutAllExcept("postId", "contents", "subTitle", "title", "postedBy", "postMember");

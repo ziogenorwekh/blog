@@ -24,6 +24,9 @@ public class BlogApplication {
     @Autowired
     private PostService postService;
 
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
     @PostConstruct
     public void test() {
         MemberCreate memberCreate = new MemberCreate();

@@ -6,9 +6,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +42,10 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+
+
+//    @OneToMany(mappedBy = "post",orphanRemoval = true,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    private List<UploadFile> files = new ArrayList<>();
 
     @Builder
     public Post(String title, String subTitle, String contents,Category category) {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class})
+    @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,FileNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
@@ -59,5 +60,11 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.GONE);
+    }
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ExceptionResponse> handleIO(WebRequest webRequest) {
+        ExceptionResponse response = new ExceptionResponse(new Date(), "aws error",
+                webRequest.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
