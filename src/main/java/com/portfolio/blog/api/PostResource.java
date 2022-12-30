@@ -10,9 +10,7 @@ import com.portfolio.blog.service.PostService;
 import com.portfolio.blog.vo.post.PostCreate;
 import com.portfolio.blog.vo.post.PostResponse;
 import com.portfolio.blog.vo.post.PostUpdate;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
@@ -42,17 +40,19 @@ public class PostResource {
     @ApiOperation(value = "글 작성", notes = "글 작성 폼에 맞는 글 생성")
     @ApiResponses({
             @ApiResponse(code = 201, message = "글 작성 성공"),
-            @ApiResponse(code = 400, message = "폼 형식에 맞지 않음")
+            @ApiResponse(code = 400, message = "폼 형식에 맞지 않음"),
+            @ApiResponse(code = 401, message = "접근 권한 없음"),
+            @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public ResponseEntity<URI> create(PostCreate postCreate, @AuthenticationPrincipal Member member) {
+    public ResponseEntity<URI> create(@RequestBody @Validated PostCreate postCreate, @AuthenticationPrincipal Member member) {
 
         Long id = postService.save(postCreate, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
     }
 
-    @ApiOperation(value = "글 조회", notes = "UUID 글 조회")
+    @ApiOperation(value = "글 단건 조회", notes = "UUID 글 단건 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "찾을 수 없음"),
@@ -66,31 +66,35 @@ public class PostResource {
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).update(null, postId, null));
         model.add(linkTo.withRel("update-post"));
         model.add(linkTo.withRel("delete-post"));
-        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse);
+        MappingJacksonValue jacksonValue = getOneMappingJacksonValue(postResponse);
         return ResponseEntity.ok().body(jacksonValue);
     }
 
 
     @ApiOperation(value = "글 전체 조회", notes = "글 전체 조회")
+    @ApiResponse(code = 200, message = "조회 성공")
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveAllPosts() {
         List<PostDto> list = postService.findAll();
-        List<PostResponse> collect = list.stream().map(PostResponse::new).toList();
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-                .filterOutAllExcept("contents", "subTitle", "title");
-
-        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("postResp", filter);
-
-        MappingJacksonValue jacksonValue = new MappingJacksonValue(collect);
-        jacksonValue.setFilters(filterProvider);
-        return ResponseEntity.ok(jacksonValue);
+        return getAllMappingJacksonValue(list);
     }
+
+    @ApiOperation(value = "특정 회원 작성 글 조회", notes = "특정 회원이 작성한 모든 글을 조회합니다.")
+    @ApiResponse(code = 200, message = "조회 성공")
+    @ApiImplicitParam(name = "memberId", value = "회원 UUID")
+    @RequestMapping(value = "{memberId}/posts", method = RequestMethod.GET)
+    public ResponseEntity<MappingJacksonValue> retrieveMemberPosts(@PathVariable String memberId) {
+        List<PostDto> list = postService.findAllByMemberId(memberId);
+        return getAllMappingJacksonValue(list);
+    }
+
 
     @ApiOperation(value = "글 수정", notes = "폼 형식에 맞는 글 수정")
     @ApiResponses({
             @ApiResponse(code = 202, message = "수정 성공"),
             @ApiResponse(code = 400, message = "폼에 맞지 않는 형식"),
-            @ApiResponse(code = 401, message = "접근 권한 없음")
+            @ApiResponse(code = 401, message = "접근 권한 없음"),
+            @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated PostUpdate postUpdate,
@@ -103,7 +107,7 @@ public class PostResource {
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).retrievePost(postId));
         model.add(linkTo.withRel("search-post"));
         model.add(linkTo.withRel("delete-post"));
-        MappingJacksonValue jacksonValue = getMappingJacksonValue(postResponse);
+        MappingJacksonValue jacksonValue = getOneMappingJacksonValue(postResponse);
 
         return ResponseEntity.accepted().body(jacksonValue);
     }
@@ -120,16 +124,28 @@ public class PostResource {
         return ResponseEntity.ok().build();
     }
 
-    private MappingJacksonValue getMappingJacksonValue(PostResponse postResponse) {
+    private MappingJacksonValue getOneMappingJacksonValue(PostResponse postResponse) {
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-                .filterOutAllExcept("postId", "contents", "subTitle", "title", "postedBy", "postMember");
+                .filterOutAllExcept("postId", "contents", "subTitle", "title", "postedBy", "postMember", "category");
 
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("postResp", filter);
 
         MappingJacksonValue jacksonValue = new MappingJacksonValue(postResponse);
         jacksonValue.setFilters(filterProvider);
         return jacksonValue;
+    }
+
+    private ResponseEntity<MappingJacksonValue> getAllMappingJacksonValue(List<PostDto> list) {
+        List<PostResponse> collect = list.stream().map(PostResponse::new).toList();
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("title", "subTitle", "category", "postId", "postedBy", "contents");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("postResp", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(collect);
+        jacksonValue.setFilters(filterProvider);
+        return ResponseEntity.ok(jacksonValue);
     }
 
 }

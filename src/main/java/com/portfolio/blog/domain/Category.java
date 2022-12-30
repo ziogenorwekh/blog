@@ -1,6 +1,27 @@
 package com.portfolio.blog.domain;
 
 
+import lombok.Getter;
+
+import java.util.Optional;
+
 public enum Category {
-    WORK,STUDY
+    WORK("WORK"),STUDY("STUDY");
+
+    @Getter
+    private final String value;
+
+    Category(String value) {
+        this.value = value;
+    }
+
+    public static Optional<Category> from(String value) {
+        for (Category category : Category.values()) {
+            if (category.getValue().equals(value)) {
+                return Optional.of(category);
+            }
+        }
+        return Optional.empty();
+    }
+
 }

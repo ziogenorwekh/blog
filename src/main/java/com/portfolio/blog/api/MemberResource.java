@@ -115,7 +115,7 @@ public class MemberResource {
 
     private void checkAuthentication(Member member, String memberId) {
         if (!member.getMemberId().equals(memberId)) {
-            throw new UnAuthenticationAccessException("you're not access this entity");
+            throw new UnAuthenticationAccessException("you're not access this data");
         }
     }
 

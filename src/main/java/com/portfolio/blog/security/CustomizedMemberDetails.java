@@ -3,6 +3,7 @@ package com.portfolio.blog.security;
 import com.portfolio.blog.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,10 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomizedMemberDetails implements UserDetails {
 
-    private Member member;
+    private final Member member;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -23,4 +23,9 @@ public class PostUpdate {
     @ApiParam(value = "글 내용")
     @ApiModelProperty(example = "내용")
     private String contents;
+
+    @ApiParam(value = "학습 또는 작품")
+    @ApiModelProperty(example = "STUDY")
+    @NotBlank(message = "빈 값은 허용되지 않습니다.")
+    private String category;
 }

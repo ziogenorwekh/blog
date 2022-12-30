@@ -34,7 +34,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,FileNotFoundException.class})
+    @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,
+            FileNotFoundException.class, CategoryNotMatchingException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
@@ -61,6 +62,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 webRequest.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.GONE);
     }
+
     @ExceptionHandler(IOException.class)
     public ResponseEntity<ExceptionResponse> handleIO(WebRequest webRequest) {
         ExceptionResponse response = new ExceptionResponse(new Date(), "aws error",

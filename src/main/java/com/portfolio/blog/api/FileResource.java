@@ -64,23 +64,23 @@ public class FileResource {
     }
 
 //    딱히 필요없는?
-    @ApiOperation(value = "파일 전체 조회", notes = "파일의 정보를 전체 조회합니다.")
-    @ApiResponse(code = 200, message = "조회 성공")
-    @RequestMapping(value = "/files", method = RequestMethod.GET)
-    public ResponseEntity<MappingJacksonValue> retrieveAllFiles() {
-
-        List<UploadFileDto> fileDtos = uploadFileService.findAll();
-
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-                .filterOutAllExcept("fileId", "filename", "mimetype", "insertDate");
-
-        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("files", filter);
-
-        MappingJacksonValue jacksonValue = new MappingJacksonValue(fileDtos);
-        jacksonValue.setFilters(filterProvider);
-
-        return ResponseEntity.ok(jacksonValue);
-    }
+//    @ApiOperation(value = "파일 전체 조회", notes = "파일의 정보를 전체 조회합니다.")
+//    @ApiResponse(code = 200, message = "조회 성공")
+//    @RequestMapping(value = "/files", method = RequestMethod.GET)
+//    public ResponseEntity<MappingJacksonValue> retrieveAllFiles() {
+//
+//        List<UploadFileDto> fileDtos = uploadFileService.findAll();
+//
+//        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+//                .filterOutAllExcept("fileId", "filename", "mimetype", "insertDate");
+//
+//        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("files", filter);
+//
+//        MappingJacksonValue jacksonValue = new MappingJacksonValue(fileDtos);
+//        jacksonValue.setFilters(filterProvider);
+//
+//        return ResponseEntity.ok(jacksonValue);
+//    }
 
     @ApiOperation(value = "파일 삭제", notes = "파일을 삭제합니다.")
     @ApiResponses({

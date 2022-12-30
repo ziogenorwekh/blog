@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult)
             throws IOException {
-        CustomizedMemberDetails memberDetails = (CustomizedMemberDetails) authResult.getDetails();
+        CustomizedMemberDetails memberDetails = (CustomizedMemberDetails) authResult.getPrincipal();
         Token token = Token.builder()
                 .memberId(memberDetails.getMember().getMemberId())
                 .roles(memberDetails.getAuthorities().stream().map(grantedAuthority ->

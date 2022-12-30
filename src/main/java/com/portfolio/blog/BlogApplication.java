@@ -1,7 +1,10 @@
 package com.portfolio.blog;
 
 import com.portfolio.blog.domain.Category;
+import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.PostSearch;
+import com.portfolio.blog.redis.RedisAuthenticationService;
+import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.service.PostService;
 import com.portfolio.blog.vo.member.MemberCreate;
@@ -11,10 +14,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 @SpringBootApplication
 public class BlogApplication {
 
+    static {
+        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+    }
     public static void main(String[] args) {
         SpringApplication.run(BlogApplication.class, args);
     }
@@ -24,9 +31,8 @@ public class BlogApplication {
     @Autowired
     private PostService postService;
 
-    static {
-        System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
-    }
+
+
     @PostConstruct
     public void test() {
         MemberCreate memberCreate = new MemberCreate();
@@ -35,10 +41,10 @@ public class BlogApplication {
         memberCreate.setPassword("1!");
 
         String memberId = memberService.save(memberCreate);
-
+        memberService.testVerified(memberId);
 
         PostCreate postCreate = new PostCreate();
-        postCreate.setCategory(Category.STUDY);
+        postCreate.setCategory(Category.STUDY.name());
         postCreate.setTitle("title");
         postCreate.setSubTitle("subTitle");
         postCreate.setContents("내용");
@@ -46,7 +52,7 @@ public class BlogApplication {
         postService.save(postCreate, memberId);
 
         PostCreate postCreate1 = new PostCreate();
-        postCreate1.setCategory(Category.STUDY);
+        postCreate1.setCategory(Category.STUDY.name());
         postCreate1.setTitle("titlasdasde");
         postCreate1.setSubTitle("subTxasrqscitle");
         postCreate1.setContents("asqvasr내aseasasd용");
@@ -54,7 +60,7 @@ public class BlogApplication {
         postService.save(postCreate1, memberId);
 
         PostCreate postCreate2 = new PostCreate();
-        postCreate2.setCategory(Category.STUDY);
+        postCreate2.setCategory(Category.STUDY.name());
         postCreate2.setTitle("titascase");
         postCreate2.setSubTitle("suqwwcacbTitle");
         postCreate2.setContents("내qwtvsdgaetEWFC용");
@@ -62,12 +68,20 @@ public class BlogApplication {
         postService.save(postCreate2, memberId);
 
         PostCreate postCreate3 = new PostCreate();
-        postCreate3.setCategory(Category.STUDY);
+        postCreate3.setCategory(Category.STUDY.name());
         postCreate3.setTitle("titASDCFADCFASDFAEWle");
         postCreate3.setSubTitle("subTitCAEFCACFASDFACSle");
         postCreate3.setContents("내FASDCFASDRAERACE용");
 
         postService.save(postCreate3, memberId);
+
+        PostCreate postCreate4 = new PostCreate();
+        postCreate4.setCategory(Category.WORK.name());
+        postCreate4.setTitle("작업물");
+        postCreate4.setContents("내용내뇽");
+        postCreate4.setSubTitle("부제목");
+
+        postService.save(postCreate4, memberId);
     }
 
 }

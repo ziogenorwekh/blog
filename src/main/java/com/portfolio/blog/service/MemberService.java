@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +61,8 @@ public class MemberService {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database")
         );
+//        연관 객체 전체 제거
+//        영속 전이와 고아 객체 제거로 타 Table 데이터 전체 제거
         member.delete();
         memberRepository.delete(member);
     }
@@ -67,7 +70,13 @@ public class MemberService {
 
     private void validateDuplicatedEmail(String email) {
         memberRepository.findMemberByEmail(email).ifPresent(member -> {
-            throw new DuplicatedEmailException("email duplicated");
+            throw new DuplicatedEmailException(String.format("%s is already exist", member.getEmail()));
         });
+    }
+
+    @Transactional
+    public void testVerified(String memberId) {
+        Optional<Member> member = memberRepository.findMemberByMemberId(memberId);
+        member.get().verified();
     }
 }

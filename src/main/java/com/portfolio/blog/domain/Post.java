@@ -33,6 +33,7 @@ public class Post {
     private String contents;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private Category category;
 
     @CreationTimestamp
@@ -62,7 +63,7 @@ public class Post {
                 .title(postCreate.getTitle())
                 .subTitle(postCreate.getSubTitle())
                 .contents(postCreate.getContents())
-                .category(postCreate.getCategory())
+                .category(Category.from(postCreate.getCategory()).get())
                 .build();
         post.addMember(member);
         return post;
@@ -78,6 +79,7 @@ public class Post {
         this.title = postUpdate.getTitle();
         this.subTitle = postUpdate.getSubTitle();
         this.contents = postUpdate.getContents();
+        this.category = Category.from(postUpdate.getCategory()).get();
     }
 
     public void delete() {

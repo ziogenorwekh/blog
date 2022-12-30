@@ -26,6 +26,6 @@ public class PostCreate {
     @ApiParam(value = "학습 또는 작품")
     @ApiModelProperty(example = "STUDY")
     @NotBlank(message = "빈 값은 허용되지 않습니다.")
-    private Category category;
+    private String category;
 
 }

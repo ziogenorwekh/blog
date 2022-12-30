@@ -1,9 +1,11 @@
 package com.portfolio.blog.service;
 
+import com.portfolio.blog.domain.Category;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.Post;
 import com.portfolio.blog.domain.PostSearch;
 import com.portfolio.blog.dto.PostDto;
+import com.portfolio.blog.exception.CategoryNotMatchingException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.exception.PostNotFoundException;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
@@ -28,6 +30,7 @@ public class PostService {
 
     @Transactional
     public Long save(PostCreate postCreate, String memberId) {
+        this.validatedCategory(postCreate.getCategory());
         Member member = memberRepository.findMemberByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));
         Post post = Post.create(postCreate, member);
@@ -49,8 +52,18 @@ public class PostService {
         return posts.stream().map(post -> new ModelMapper().map(post, PostDto.class)).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<PostDto> findAllByMemberId(String memberId) {
+        Member member = memberRepository.findMemberByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("member not in database"));
+        List<Post> posts = postRepository.findPostByMember(member);
+        return posts.stream().map(post -> new ModelMapper().map(post, PostDto.class)).collect(Collectors.toList());
+    }
+
+
     @Transactional
     public PostDto update(PostUpdate postUpdate, PostSearch postSearch) {
+        this.validatedCategory(postUpdate.getCategory());
         Post post = this.checkOwnPost(postSearch);
         post.update(postUpdate);
         return new ModelMapper().map(post, PostDto.class);
@@ -70,4 +83,10 @@ public class PostService {
         }
         return post;
     }
+
+
+    private void validatedCategory(String category) {
+        Category.from(category).orElseThrow(() -> new CategoryNotMatchingException("category is not matched"));
+    }
+
 }

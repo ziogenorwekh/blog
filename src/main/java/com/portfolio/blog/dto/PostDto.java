@@ -2,6 +2,7 @@ package com.portfolio.blog.dto;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.portfolio.blog.domain.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class PostDto implements Serializable {
     private String title;
     private String subTitle;
     private String contents;
+    private Category category;
     private Date postedBy;
     private MemberDto member;
 }

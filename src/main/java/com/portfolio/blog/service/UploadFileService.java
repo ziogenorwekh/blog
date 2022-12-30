@@ -48,7 +48,6 @@ public class UploadFileService {
         return uploadFile.getFileId();
     }
 
-
     @Transactional(readOnly = true)
     @SneakyThrows(IOException.class)
     public UploadFileDto findOne(String uuid) {

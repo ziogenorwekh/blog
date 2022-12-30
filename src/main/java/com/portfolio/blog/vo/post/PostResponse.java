@@ -16,6 +16,8 @@ public class PostResponse {
     private String contents;
     @JsonFormat(pattern = "YY-MM-dd", shape = JsonFormat.Shape.STRING)
     private Date postedBy;
+
+    private String category;
     private String postMember;
 
     public PostResponse(PostDto postDto) {
@@ -25,5 +27,6 @@ public class PostResponse {
         this.contents = postDto.getContents();
         this.postedBy = postDto.getPostedBy();
         this.postMember = postDto.getMember().getName();
+        this.category = postDto.getCategory().name();
     }
 }
