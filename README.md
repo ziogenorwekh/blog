@@ -1,5 +1,5 @@
-# blog
+<h1>blog</h1>
 포트폴리오 올릴 블로그용
 
-
-# jwt 권한, aws S3, aws ec2 , aws rds, aws redis
+<h1>사용함</h1>
+<h3>jwt, aws S3, aws ec2, aws rds, aws redis, security, REST API, jpa, swagger</h3>
