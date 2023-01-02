@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -33,61 +34,84 @@ public class FileResource {
 
     private final UploadFileService uploadFileService;
 
-    @ApiOperation(value = "파일 저장", notes = "파일을 저장합니다.")
+    @ApiOperation(value = "이미지 저장", notes = "이미지을 저장합니다.")
     @ApiResponses({
             @ApiResponse(code = 201, message = "저장 성공"),
             @ApiResponse(code = 500, message = "aws 버킷 에러"),
     })
-    @RequestMapping(value = "/files", method = RequestMethod.POST)
-    public ResponseEntity<URI> save(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
-
+    @RequestMapping(value = "/images", method = RequestMethod.POST)
+    public ResponseEntity<URI> saveImages(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
         String id = uploadFileService.save(upload);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
     }
 
+//    사용 ㄴ
+    @Deprecated
+    @ApiOperation(value = "html 파일 저장",notes = "html 파일을 저장하고 post의 contents로 반환합니다.")
+    @RequestMapping(value = "/files",method = RequestMethod.POST)
+    public ResponseEntity<String> saveHtml(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
+        String html = uploadFileService.saveHtml(upload);
+
+//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+        return ResponseEntity.ok(html);
+    }
+
+
+
+
     @SneakyThrows(IOException.class)
-    @ApiOperation(value = "파일 조회", notes = "UUID 값에서 파일을 조회합니다.")
+    @ApiOperation(value = "이미지 조회", notes = "UUID 값에서 이미지을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "해당 파일 존재하지 않음"),
     })
-    @RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET, produces = {
+    @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET, produces = {
             MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE
     })
     public ResponseEntity<?> retrieveFiles(@PathVariable String fileId) {
         UploadFileDto fileDto = uploadFileService.findOne(fileId);
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(fileDto.getMimetype()))
                 .body(IOUtils.toByteArray(fileDto.getUrlResource().getInputStream()));
     }
 
-//    딱히 필요없는?
-//    @ApiOperation(value = "파일 전체 조회", notes = "파일의 정보를 전체 조회합니다.")
-//    @ApiResponse(code = 200, message = "조회 성공")
-//    @RequestMapping(value = "/files", method = RequestMethod.GET)
-//    public ResponseEntity<MappingJacksonValue> retrieveAllFiles() {
-//
-//        List<UploadFileDto> fileDtos = uploadFileService.findAll();
-//
-//        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-//                .filterOutAllExcept("fileId", "filename", "mimetype", "insertDate");
-//
-//        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("files", filter);
-//
-//        MappingJacksonValue jacksonValue = new MappingJacksonValue(fileDtos);
-//        jacksonValue.setFilters(filterProvider);
-//
-//        return ResponseEntity.ok(jacksonValue);
-//    }
 
-    @ApiOperation(value = "파일 삭제", notes = "파일을 삭제합니다.")
+    /**
+     * Test
+     * @return
+     */
+    @RequestMapping(value = "/files",method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteAll() {
+        uploadFileService.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
+//    딱히 필요없는?
+    @ApiOperation(value = "파일 전체 조회", notes = "파일의 정보를 전체 조회합니다.")
+    @ApiResponse(code = 200, message = "조회 성공")
+    @RequestMapping(value = "/files", method = RequestMethod.GET)
+    public ResponseEntity<MappingJacksonValue> retrieveAllFiles() {
+
+        List<UploadFileDto> fileDtos = uploadFileService.findAll();
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("fileId", "filename", "mimetype", "insertDate");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("files", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(fileDtos);
+        jacksonValue.setFilters(filterProvider);
+
+        return ResponseEntity.ok(jacksonValue);
+    }
+
+    @ApiOperation(value = "이미지 삭제", notes = "이미지를 삭제합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "삭제 성공"),
             @ApiResponse(code = 404, message = "해당 파일 존재하지 않음"),
     })
-    @RequestMapping(value = "/files/{fileId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/images/{fileId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String fileId) {
         uploadFileService.delete(fileId);
         return ResponseEntity.ok().build();

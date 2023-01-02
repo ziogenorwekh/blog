@@ -28,8 +28,7 @@ public class Post {
 
     private String title;
 
-    private String subTitle;
-
+    @Lob
     private String contents;
 
     @Enumerated(value = EnumType.STRING)
@@ -49,10 +48,9 @@ public class Post {
 //    private List<UploadFile> files = new ArrayList<>();
 
     @Builder
-    public Post(String title, String subTitle, String contents,Category category) {
+    public Post(String title, String contents,Category category) {
         this.postId = UUID.randomUUID().toString();
         this.title = title;
-        this.subTitle = subTitle;
         this.contents = contents;
         this.category = category;
     }
@@ -61,7 +59,6 @@ public class Post {
     public static Post create(PostCreate postCreate, Member member) {
         Post post = Post.builder()
                 .title(postCreate.getTitle())
-                .subTitle(postCreate.getSubTitle())
                 .contents(postCreate.getContents())
                 .category(Category.from(postCreate.getCategory()).get())
                 .build();
@@ -77,7 +74,6 @@ public class Post {
 
     public void update(PostUpdate postUpdate) {
         this.title = postUpdate.getTitle();
-        this.subTitle = postUpdate.getSubTitle();
         this.contents = postUpdate.getContents();
         this.category = Category.from(postUpdate.getCategory()).get();
     }

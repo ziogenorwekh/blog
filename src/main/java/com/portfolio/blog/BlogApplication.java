@@ -46,7 +46,6 @@ public class BlogApplication {
         PostCreate postCreate = new PostCreate();
         postCreate.setCategory(Category.STUDY.name());
         postCreate.setTitle("title");
-        postCreate.setSubTitle("subTitle");
         postCreate.setContents("내용");
 
         postService.save(postCreate, memberId);
@@ -54,7 +53,6 @@ public class BlogApplication {
         PostCreate postCreate1 = new PostCreate();
         postCreate1.setCategory(Category.STUDY.name());
         postCreate1.setTitle("titlasdasde");
-        postCreate1.setSubTitle("subTxasrqscitle");
         postCreate1.setContents("asqvasr내aseasasd용");
 
         postService.save(postCreate1, memberId);
@@ -62,7 +60,6 @@ public class BlogApplication {
         PostCreate postCreate2 = new PostCreate();
         postCreate2.setCategory(Category.STUDY.name());
         postCreate2.setTitle("titascase");
-        postCreate2.setSubTitle("suqwwcacbTitle");
         postCreate2.setContents("내qwtvsdgaetEWFC용");
 
         postService.save(postCreate2, memberId);
@@ -70,7 +67,6 @@ public class BlogApplication {
         PostCreate postCreate3 = new PostCreate();
         postCreate3.setCategory(Category.STUDY.name());
         postCreate3.setTitle("titASDCFADCFASDFAEWle");
-        postCreate3.setSubTitle("subTitCAEFCACFASDFACSle");
         postCreate3.setContents("내FASDCFASDRAERACE용");
 
         postService.save(postCreate3, memberId);
@@ -79,7 +75,6 @@ public class BlogApplication {
         postCreate4.setCategory(Category.WORK.name());
         postCreate4.setTitle("작업물");
         postCreate4.setContents("내용내뇽");
-        postCreate4.setSubTitle("부제목");
 
         postService.save(postCreate4, memberId);
     }

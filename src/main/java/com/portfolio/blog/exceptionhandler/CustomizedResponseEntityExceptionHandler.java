@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.io.IOException;
@@ -47,7 +48,21 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DuplicatedEmailException.class)
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ExceptionResponse> handleMaxFileSize(WebRequest webRequest) {
+        ExceptionResponse response = new ExceptionResponse(new Date(),
+                "Maximum file size is 20MB.", webRequest.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(WrongFileTypeException.class)
+    public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest,Exception e) {
+        ExceptionResponse response = new ExceptionResponse(new Date(),
+                e.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({DuplicatedEmailException.class,DuplicatedNameException.class})
     public ResponseEntity<ExceptionResponse> handleDuplicate(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));

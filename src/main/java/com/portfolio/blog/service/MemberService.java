@@ -3,6 +3,7 @@ package com.portfolio.blog.service;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.dto.MemberDto;
 import com.portfolio.blog.exception.DuplicatedEmailException;
+import com.portfolio.blog.exception.DuplicatedNameException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.vo.member.MemberCreate;
@@ -26,6 +27,7 @@ public class MemberService {
     @Transactional
     public String save(MemberCreate memberCreate) {
         validateDuplicatedEmail(memberCreate.getEmail());
+        validateDuplicatedName(memberCreate.getName());
         memberCreate.setPassword(passwordEncoder.encode(memberCreate.getPassword()));
         Member member = Member.create(memberCreate);
         memberRepository.save(member);
@@ -51,6 +53,7 @@ public class MemberService {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database")
         );
+        validateDuplicatedName(memberUpdate.getName());
         memberUpdate.setPassword(passwordEncoder.encode(memberUpdate.getPassword()));
         member.update(memberUpdate);
         return new ModelMapper().map(member, MemberDto.class);
@@ -71,6 +74,12 @@ public class MemberService {
     private void validateDuplicatedEmail(String email) {
         memberRepository.findMemberByEmail(email).ifPresent(member -> {
             throw new DuplicatedEmailException(String.format("%s is already exist", member.getEmail()));
+        });
+    }
+
+    private void validateDuplicatedName(String name) {
+        memberRepository.findMemberByName(name).ifPresent(member -> {
+            throw new DuplicatedNameException(String.format("%s is already exist", member.getName()));
         });
     }
 

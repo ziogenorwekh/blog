@@ -27,6 +27,7 @@ public class Member {
     @Column(name = "MEMBER_UUID", unique = true)
     private String memberId;
 
+    @Column(unique = true)
     private String name;
 
     private String password;

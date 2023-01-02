@@ -3,6 +3,7 @@ package com.portfolio.blog.s3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.portfolio.blog.domain.UploadFile;
 import com.portfolio.blog.dto.S3Dto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +38,12 @@ public class AwsS3Service {
     // S3 파일 삭제
     public void remove(String filename) {
         amazonS3Client.deleteObject(this.bucket,filename);
+    }
+
+    public void removeAll(List<String> files) {
+        files.stream().forEach(s -> {
+            amazonS3Client.deleteObject(this.bucket, s);
+        });
     }
 
     private S3Dto upload(File uploadFile, String uuid) {

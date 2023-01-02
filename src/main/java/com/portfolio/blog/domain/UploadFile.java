@@ -23,7 +23,6 @@ public class UploadFile {
     @Column(unique = true, length = 100)
     private String filename;
 
-
     private String mimetype;
 
     private String fileUrl;

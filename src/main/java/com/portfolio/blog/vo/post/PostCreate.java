@@ -15,9 +15,6 @@ public class PostCreate {
     @Size(min = 2, message = "최소 두글자 이상의 제목을 정해주세요.")
     private String title;
 
-    @ApiParam(value = "글 부제목")
-    @ApiModelProperty(example = "부제목")
-    private String subTitle;
 
     @ApiParam(value = "글 내용")
     @ApiModelProperty(example = "내용")

@@ -12,7 +12,6 @@ import java.util.Date;
 public class PostResponse {
     private String postId;
     private String title;
-    private String subTitle;
     private String contents;
     @JsonFormat(pattern = "YY-MM-dd", shape = JsonFormat.Shape.STRING)
     private Date postedBy;
@@ -23,7 +22,6 @@ public class PostResponse {
     public PostResponse(PostDto postDto) {
         this.postId = postDto.getPostId();
         this.title = postDto.getTitle();
-        this.subTitle = postDto.getSubTitle();
         this.contents = postDto.getContents();
         this.postedBy = postDto.getPostedBy();
         this.postMember = postDto.getMember().getName();

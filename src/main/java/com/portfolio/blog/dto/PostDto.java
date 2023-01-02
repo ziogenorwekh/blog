@@ -20,7 +20,6 @@ public class PostDto implements Serializable {
     private Long id;
     private String postId;
     private String title;
-    private String subTitle;
     private String contents;
     private Category category;
     private Date postedBy;

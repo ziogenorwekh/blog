@@ -6,6 +6,7 @@ import com.portfolio.blog.dto.S3Dto;
 import com.portfolio.blog.dto.UploadFileDto;
 import com.portfolio.blog.exception.FileNotFoundException;
 import com.portfolio.blog.exception.PostNotFoundException;
+import com.portfolio.blog.exception.WrongFileTypeException;
 import com.portfolio.blog.repo.PostRepository;
 import com.portfolio.blog.repo.UploadFileRepository;
 import com.portfolio.blog.s3.AwsS3Service;
@@ -20,8 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -37,6 +41,7 @@ public class UploadFileService {
     @Transactional
     public String save(MultipartFile multipartFile) {
         String uuid = UUID.randomUUID().toString();
+
         S3Dto s3Dto = awsS3Service.upload(multipartFile, uuid);
         UploadFile uploadFile = UploadFile.builder()
                 .filename(s3Dto.getFilename())
@@ -45,7 +50,41 @@ public class UploadFileService {
                 .mimetype(multipartFile.getContentType()).build();
 
         uploadFileRepository.save(uploadFile);
+
         return uploadFile.getFileId();
+    }
+
+    @Deprecated
+    @Transactional
+    public String saveHtml(MultipartFile multipartFile) {
+        String uuid = UUID.randomUUID().toString();
+        if (!multipartFile.getContentType().equals("text/html")) {
+            throw new WrongFileTypeException("Only possible html type file.");
+        }
+        S3Dto s3Dto = awsS3Service.upload(multipartFile, uuid);
+        UploadFile uploadFile = UploadFile.builder()
+                .filename(s3Dto.getFilename())
+                .fileId(uuid)
+                .fileUrl(s3Dto.getUploadUrl())
+                .mimetype(multipartFile.getContentType()).build();
+
+        uploadFileRepository.save(uploadFile);
+        URL url = null;
+        BufferedReader input = null;
+        String address = s3Dto.getUploadUrl();
+        String line = "";
+        String readHtml = "";
+        try {
+            url = new URL(address);
+            input = new BufferedReader(new InputStreamReader(url.openStream()));
+            while ((line = input.readLine()) != null) {
+                readHtml += line;
+            }
+            input.close();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return readHtml;
     }
 
     @Transactional(readOnly = true)
@@ -73,6 +112,14 @@ public class UploadFileService {
         awsS3Service.remove(uploadFile.getFilename());
         uploadFile.delete();
         uploadFileRepository.delete(uploadFile);
+    }
+
+    @Transactional
+    public void deleteAll() {
+        List<UploadFile> files = uploadFileRepository.findAll();
+        List<String> filenames = files.stream().map(file -> file.getFilename()).collect(Collectors.toList());
+        awsS3Service.removeAll(filenames);
+        uploadFileRepository.deleteAll();
     }
 
 }
