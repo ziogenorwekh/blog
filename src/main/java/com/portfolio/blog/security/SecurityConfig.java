@@ -50,9 +50,9 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.formLogin().disable();
         http.authorizeRequests().antMatchers(HttpMethod.GET).permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.POST).hasRole("USER");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE).hasRole("USER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT).hasRole("USER");
+//        http.authorizeRequests().antMatchers(HttpMethod.POST).hasRole("USER");
+//        http.authorizeRequests().antMatchers(HttpMethod.DELETE).hasRole("USER");
+//        http.authorizeRequests().antMatchers(HttpMethod.PUT).hasRole("USER");
         http.authorizeRequests().antMatchers("/**").permitAll();
         http.addFilter(jwtAuthenticationFilter)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

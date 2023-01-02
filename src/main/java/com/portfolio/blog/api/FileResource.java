@@ -39,7 +39,7 @@ public class FileResource {
             @ApiResponse(code = 500, message = "aws 버킷 에러"),
     })
     @RequestMapping(value = "/files", method = RequestMethod.POST)
-    public ResponseEntity<URI> save(@RequestPart(value = "upload") @ApiIgnore MultipartFile upload) {
+    public ResponseEntity<URI> save(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
 
         String id = uploadFileService.save(upload);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
@@ -87,7 +87,7 @@ public class FileResource {
             @ApiResponse(code = 200, message = "삭제 성공"),
             @ApiResponse(code = 404, message = "해당 파일 존재하지 않음"),
     })
-    @RequestMapping(value = "/files/{fileId}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/files/{fileId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String fileId) {
         uploadFileService.delete(fileId);
         return ResponseEntity.ok().build();

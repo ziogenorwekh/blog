@@ -35,23 +35,26 @@ public class RedisAuthenticationService {
     public void sendAuthentication(String email) {
         log.debug("sendAuthenticationTest email :: {}", email);
         memberRepository.findMemberByEmail(email)
-                .orElseThrow(()->new MemberNotFoundException("member not in database"));
+                .orElseThrow(() -> new MemberNotFoundException("member not in database"));
         String number = "";
         for (int i = 0; i < 6; i++) {
             int random = (int) (Math.random() * 10);
             number += random;
         }
-        redisRepo.save(number,email,60*5L);
+        redisRepo.save(number, email, 60 * 5L);
         this.sendMail(email, "회원 가입 인증 번호", number);
     }
 
+    // 수정해야 됌
+    // 잘못된 키면 잘못된 키라고 전달해야 하고,
+//     키가 만료되었으면 만료되었다고 전달해야 한다.
     @Transactional
     public void verifyAuthentication(String key) {
 
-        log.debug("verifyAuthentication :: {}",key);
+        log.debug("verifyAuthentication :: {}", key);
         String email = redisRepo.findOne(key);
         if (email == null) {
-            throw new EmailAuthenticationException("expired");
+            throw new EmailAuthenticationException("wrong or expired");
         }
         Member member = memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));

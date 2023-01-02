@@ -38,7 +38,7 @@ public class JwtServe {
         String access = JWT.create().withSubject(token.getMemberId())
                 .withIssuer(token.getName())
                 .withArrayClaim("roles", token.getRoles().toArray(new String[0]))
-                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000)) // 15 minutes
                 .sign(algorithm);
         Map<String, String> accessToken = new HashMap<>();
         accessToken.put("access_token", access);

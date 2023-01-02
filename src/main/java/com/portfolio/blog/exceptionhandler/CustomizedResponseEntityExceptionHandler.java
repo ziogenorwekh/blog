@@ -2,6 +2,7 @@ package com.portfolio.blog.exceptionhandler;
 
 import com.portfolio.blog.exception.*;
 import com.portfolio.blog.vo.ExceptionResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @RestController
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
@@ -27,6 +29,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
             HttpHeaders headers,
             HttpStatus status, WebRequest request) {
         List<ObjectError> errors = ex.getBindingResult().getAllErrors();
+        for (ObjectError e: errors) {
+            log.info(e.getDefaultMessage());
+        }
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),
                 errors.get(0).getDefaultMessage(),
