@@ -1,6 +1,7 @@
 package com.portfolio.blog.api;
 
 import com.portfolio.blog.domain.Member;
+import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.redis.RedisAuthenticationService;
 import com.portfolio.blog.vo.EmailVerify;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +45,7 @@ public class AuthenticationResource {
     }
 
 
-    @ApiOperation(value = "토큰 재발급", notes = "액세스 토큰을 재발급하고, 리프레시 토큰을 redis 에 저장합니다.")
+    @ApiOperation(value = "토큰 재발급", notes = "액세스 토큰을 재발급하고, 재발급 토큰을 redis 에 저장합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "재발급 성공"),
             @ApiResponse(code = 404, message = "해당 회원 존재하지 않음"),
@@ -55,4 +56,14 @@ public class AuthenticationResource {
         return ResponseEntity.ok(token);
     }
 
+    @ApiOperation(value = "토큰 삭제", notes = "재발급 토큰을 redis 에서 지웁니다.")
+    @ApiResponse(code = 200, message = "삭제 성공")
+    @RequestMapping(value = "/flush", method = RequestMethod.GET)
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal @ApiIgnore Member member) {
+        if (member == null) {
+            throw new MemberNotFoundException("already logout.");
+        }
+        redisAuthenticationService.deleteRefresh(member.getMemberId());
+        return ResponseEntity.ok().build();
+    }
 }

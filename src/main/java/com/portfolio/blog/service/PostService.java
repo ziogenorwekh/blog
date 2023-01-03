@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +61,15 @@ public class PostService {
         return posts.stream().map(post -> new ModelMapper().map(post, PostDto.class)).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<PostDto> findByMemberIdAndCategory(String memberId,String category) {
+        Member member = memberRepository.findMemberByMemberId(memberId)
+                .orElseThrow(() -> new MemberNotFoundException("member not in database"));
+        this.validatedCategory(category);
+        Category categoryEnum = Category.from(category).get();
+        List<Post> posts = postRepository.findPostByMemberAndCategory(member, categoryEnum);
+        return posts.stream().map(post -> new ModelMapper().map(post, PostDto.class)).collect(Collectors.toList());
+    }
 
     @Transactional
     public PostDto update(PostUpdate postUpdate, PostSearch postSearch) {

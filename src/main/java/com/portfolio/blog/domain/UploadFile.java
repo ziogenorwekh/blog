@@ -51,14 +51,9 @@ public class UploadFile {
                 .mimetype(mimetype)
                 .fileUrl(fileUrl)
                 .build();
-//        uploadFile.addPost(post);
         return uploadFile;
     }
 
-//    public void addPost(Post post) {
-//        this.post = post;
-//        post.getFiles().add(this);
-//    }
 
     public void delete() {
 

@@ -9,5 +9,4 @@ public class PostSearch {
 
     private String memberId;
     private String postId;
-
 }

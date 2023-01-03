@@ -46,19 +46,6 @@ public class FileResource {
         return ResponseEntity.created(uri).build();
     }
 
-//    사용 ㄴ
-    @Deprecated
-    @ApiOperation(value = "html 파일 저장",notes = "html 파일을 저장하고 post의 contents로 반환합니다.")
-    @RequestMapping(value = "/files",method = RequestMethod.POST)
-    public ResponseEntity<String> saveHtml(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
-        String html = uploadFileService.saveHtml(upload);
-
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
-        return ResponseEntity.ok(html);
-    }
-
-
-
 
     @SneakyThrows(IOException.class)
     @ApiOperation(value = "이미지 조회", notes = "UUID 값에서 이미지을 조회합니다.")

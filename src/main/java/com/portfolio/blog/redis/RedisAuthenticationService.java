@@ -125,6 +125,11 @@ public class RedisAuthenticationService {
         redisRepo.saveRefresh(token.getMemberId(), refresh);
     }
 
+    @Transactional
+    public void deleteRefresh(String memberId) {
+        redisRepo.delete(memberId);
+    }
+
     public String decodeTokenGetIssuer(String token) {
         return JWT.decode(token).getIssuer();
     }

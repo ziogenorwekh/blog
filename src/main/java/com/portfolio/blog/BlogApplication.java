@@ -36,8 +36,8 @@ public class BlogApplication {
     @PostConstruct
     public void test() {
         MemberCreate memberCreate = new MemberCreate();
-        memberCreate.setEmail("lsek");
-        memberCreate.setName("sel");
+        memberCreate.setEmail("email@email.com");
+        memberCreate.setName("ziogenorwekh");
         memberCreate.setPassword("1!");
 
         String memberId = memberService.save(memberCreate);

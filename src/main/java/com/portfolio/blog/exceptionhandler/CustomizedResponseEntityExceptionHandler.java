@@ -30,7 +30,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
             HttpHeaders headers,
             HttpStatus status, WebRequest request) {
         List<ObjectError> errors = ex.getBindingResult().getAllErrors();
-        for (ObjectError e: errors) {
+        for (ObjectError e : errors) {
             log.info(e.getDefaultMessage());
         }
         ExceptionResponse exceptionResponse = new ExceptionResponse(
@@ -41,7 +41,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,
-            FileNotFoundException.class, CategoryNotMatchingException.class})
+            FileNotFoundException.class, CategoryNotMatchingException.class, RecordNotFountException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
@@ -55,14 +55,15 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
                 "Maximum file size is 20MB.", webRequest.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
+
     @ExceptionHandler(WrongFileTypeException.class)
-    public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest,Exception e) {
+    public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(),
                 e.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({DuplicatedEmailException.class,DuplicatedNameException.class})
+    @ExceptionHandler({DuplicatedEmailException.class, DuplicatedNameException.class})
     public ResponseEntity<ExceptionResponse> handleDuplicate(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));

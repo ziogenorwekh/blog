@@ -38,6 +38,10 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,orphanRemoval = true,cascade = CascadeType.ALL)
+    private List<Records> records = new ArrayList<>();
+
+
     @Builder
     public Member(String email, String name, String password) {
         this.email = email;
@@ -76,5 +80,6 @@ public class Member {
     public void delete() {
         this.getRoles().clear();
         this.getPosts().clear();
+        this.getRecords().clear();
     }
 }

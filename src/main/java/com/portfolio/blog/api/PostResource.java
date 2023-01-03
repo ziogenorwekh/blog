@@ -7,6 +7,7 @@ import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.PostSearch;
 import com.portfolio.blog.dto.PostDto;
 import com.portfolio.blog.service.PostService;
+import com.portfolio.blog.vo.post.CategoryReq;
 import com.portfolio.blog.vo.post.PostCreate;
 import com.portfolio.blog.vo.post.PostResponse;
 import com.portfolio.blog.vo.post.PostUpdate;
@@ -88,6 +89,17 @@ public class PostResource {
         return getAllMappingJacksonValue(list);
     }
 
+    @ApiOperation(value = "특정 회원 작성 글 조회", notes = "특정 회원이 작성한 모든 글을 카테고리별로 조회합니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "회원 UUID"),
+            @ApiImplicitParam(name = "category", value = "카테고리")
+    })
+    @RequestMapping(value = "{memberId}/posts/{category}", method = RequestMethod.GET)
+    public ResponseEntity<MappingJacksonValue> retrieveMemberPostsByCategory(@PathVariable String memberId
+            , @PathVariable String category) {
+        List<PostDto> list = postService.findByMemberIdAndCategory(memberId, category);
+        return getAllMappingJacksonValue(list);
+    }
 
     @ApiOperation(value = "글 수정", notes = "폼 형식에 맞는 글 수정")
     @ApiResponses({
