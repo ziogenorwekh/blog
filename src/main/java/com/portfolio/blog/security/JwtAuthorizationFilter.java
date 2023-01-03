@@ -1,8 +1,8 @@
 package com.portfolio.blog.security;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.portfolio.blog.redis.RedisAuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,13 +25,15 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private CustomizedMemberDetailsService memberDetailsService;
-    private JwtServe jwtServe;
+    private RedisAuthenticationService redisAuthenticationService;
 
     @Autowired
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager,CustomizedMemberDetailsService memberDetailsService,JwtServe jwtServe) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
+                                  CustomizedMemberDetailsService memberDetailsService,
+                                  RedisAuthenticationService redisAuthenticationService) {
         super(authenticationManager);
         this.memberDetailsService = memberDetailsService;
-        this.jwtServe = jwtServe;
+        this.redisAuthenticationService = redisAuthenticationService;
     }
 
     @Override
@@ -55,19 +56,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
         log.debug("getAuthentication");
         String jwtHeader = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
+        log.debug("jwtHeader :: {}", jwtHeader);
         CustomizedMemberDetails memberDetails;
         UsernamePasswordAuthenticationToken authenticationToken = null;
         try {
             memberDetails = (CustomizedMemberDetails) memberDetailsService.loadUserByUsername(
-                    JWT.require(jwtServe.algorithm).build().verify(jwtHeader).getIssuer());
+                    redisAuthenticationService.decodeTokenGetIssuer(jwtHeader));
             authenticationToken =
                     new UsernamePasswordAuthenticationToken(memberDetails.getMember(),
                             null, memberDetails.getAuthorities());
         } catch (JWTDecodeException e) {
+            log.error(e.getMessage());
             exceptionHandler(response, e, HttpServletResponse.SC_BAD_REQUEST);
         } catch (TokenExpiredException e) {
+            log.error(e.getMessage());
             exceptionHandler(response, e, HttpServletResponse.SC_GONE);
         } catch (Exception e) {
+            log.error(e.getMessage());
             exceptionHandler(response, e, HttpServletResponse.SC_UNAUTHORIZED);
         }
         return authenticationToken;

@@ -76,7 +76,6 @@ public class MemberResource {
     }
 
 
-
     @ApiOperation(value = "회원 수정", notes = "회원 아이디를 통해 회원 수정")
     @ApiResponses({
             @ApiResponse(code = 202, message = "수정 성공"),
@@ -84,10 +83,10 @@ public class MemberResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
-    @RequestMapping(value = "/members/{memberId}",method = RequestMethod.PUT)
+    @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
     public ResponseEntity<EntityModel<MemberResponse>> update(@RequestBody @Validated MemberUpdate memberUpdate
-    , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
-        this.checkAuthentication(member,memberId);
+            , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
+        this.checkAuthentication(member, memberId);
         MemberDto memberDto = memberService.update(memberUpdate, memberId);
 
         EntityModel<MemberResponse> model = EntityModel.of(new MemberResponse(memberDto));
@@ -107,11 +106,10 @@ public class MemberResource {
     })
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
-        this.checkAuthentication(member,memberId);
+        this.checkAuthentication(member, memberId);
         memberService.delete(memberId);
         return ResponseEntity.ok().build();
     }
-
 
     private void checkAuthentication(Member member, String memberId) {
         if (!member.getMemberId().equals(memberId)) {

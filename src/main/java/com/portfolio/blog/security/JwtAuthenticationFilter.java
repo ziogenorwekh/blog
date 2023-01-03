@@ -1,6 +1,7 @@
 package com.portfolio.blog.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.blog.redis.RedisAuthenticationService;
 import com.portfolio.blog.vo.Login;
 import com.portfolio.blog.vo.Token;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private final AuthenticationManager authenticationManager;
-    private final JwtServe jwtServe;
+    //    private final JwtServe jwtServe;
+    private final RedisAuthenticationService redisAuthenticationService;
 
     @Override
     @SneakyThrows(IOException.class)
@@ -58,14 +60,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain, Authentication authResult)
             throws IOException {
         CustomizedMemberDetails memberDetails = (CustomizedMemberDetails) authResult.getPrincipal();
-        Token token = Token.builder()
-                .memberId(memberDetails.getMember().getMemberId())
-                .roles(memberDetails.getAuthorities().stream().map(grantedAuthority ->
-                        grantedAuthority.getAuthority()).collect(Collectors.toList()))
-                .name(memberDetails.getUsername())
-                .build();
-        Map<String, String> jwtServeToken = jwtServe.createToken(token);
-
+        String memberId = memberDetails.getMemberId();
+        Map<String, String> jwtServeToken = redisAuthenticationService.createToken(memberId);
+        jwtServeToken.put("memberId", memberId);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), jwtServeToken);
     }

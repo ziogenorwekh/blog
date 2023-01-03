@@ -31,6 +31,10 @@ public class CustomizedMemberDetails implements UserDetails {
         return grantedAuthorities;
     }
 
+    public String getMemberId() {
+        return member.getMemberId();
+    }
+
     @Override
     public String getPassword() {
         return member.getPassword();

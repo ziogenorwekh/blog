@@ -1,6 +1,7 @@
 package com.portfolio.blog.security;
 
 import com.portfolio.blog.exceptionhandler.CustomizedAccessDeniedHandler;
+import com.portfolio.blog.redis.RedisAuthenticationService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,14 +25,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private AuthenticationConfiguration authenticationConfiguration;
-    private JwtServe jwtServe;
+    private RedisAuthenticationService redisAuthenticationService;
     private CustomizedMemberDetailsService detailsService;
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JwtServe jwtServe
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,RedisAuthenticationService redisAuthenticationService
     ,CustomizedMemberDetailsService detailsService) {
         this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtServe = jwtServe;
+        this.redisAuthenticationService = redisAuthenticationService;
         this.detailsService = detailsService;
     }
 
@@ -40,10 +41,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
 
         JwtAuthenticationFilter jwtAuthenticationFilter =
-                new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),jwtServe);
+                new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),redisAuthenticationService);
         JwtAuthorizationFilter jwtAuthorizationFilter =
                 new JwtAuthorizationFilter(authenticationManager(authenticationConfiguration)
-                        , detailsService, jwtServe);
+                        , detailsService, redisAuthenticationService);
 
         http.httpBasic().disable();
         http.csrf().disable();
