@@ -7,6 +7,7 @@ import com.portfolio.blog.redis.RedisAuthenticationService;
 import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.service.PostService;
+import com.portfolio.blog.vo.WorkUrlCreate;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.post.PostCreate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,17 @@ public class BlogApplication {
         MemberCreate memberCreate = new MemberCreate();
         memberCreate.setEmail("email@email.com");
         memberCreate.setName("ziogenorwekh");
+        memberCreate.setRealName("김철수");
+        memberCreate.setGithub("ziogenorwekh");
         memberCreate.setPassword("1!");
 
         String memberId = memberService.save(memberCreate);
         memberService.testVerified(memberId);
+
+        WorkUrlCreate workUrlCreate = new WorkUrlCreate();
+        workUrlCreate.setUrl("http://localohost/hello/portfolio");
+
+        memberService.saveWorkUrl(workUrlCreate, memberId);
 
         PostCreate postCreate = new PostCreate();
         postCreate.setCategory(Category.STUDY.name());

@@ -6,6 +6,7 @@ import com.portfolio.blog.exception.DuplicatedEmailException;
 import com.portfolio.blog.exception.DuplicatedNameException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
+import com.portfolio.blog.vo.WorkUrlCreate;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberUpdate;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,8 @@ public class MemberService {
     public MemberDto findOne(String memberId) {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database"));
-        return new ModelMapper().map(member, MemberDto.class);
+        MemberDto memberDto = new MemberDto(member);
+        return memberDto;
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +70,14 @@ public class MemberService {
 //        영속 전이와 고아 객체 제거로 타 Table 데이터 전체 제거
         member.delete();
         memberRepository.delete(member);
+    }
+
+    @Transactional
+    public String saveWorkUrl(WorkUrlCreate workUrlCreate, String memberId) {
+        Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
+                new MemberNotFoundException("member not in database")
+        );
+        return member.addWorkUrl(workUrlCreate);
     }
 
 

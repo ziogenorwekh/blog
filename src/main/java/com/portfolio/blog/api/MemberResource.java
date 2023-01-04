@@ -1,5 +1,8 @@
 package com.portfolio.blog.api;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.dto.MemberDto;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +56,7 @@ public class MemberResource {
             @ApiResponse(code = 404, message = "회원 존재하지 않음")
     })
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.GET)
-    public ResponseEntity<EntityModel<MemberResponse>> retrieveMember(@PathVariable String memberId) {
+    public ResponseEntity<MappingJacksonValue> retrieveMember(@PathVariable String memberId) {
         MemberDto memberDto = memberService.findOne(memberId);
         EntityModel<MemberResponse> model = EntityModel.of(new MemberResponse(memberDto));
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder
@@ -60,7 +64,15 @@ public class MemberResource {
         model.add(linkBuilder.withRel("delete-member"));
         model.add(linkBuilder.withRel("update-member"));
 
-        return ResponseEntity.ok(model);
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("memberId", "name", "email", "realName", "selfIntroduce","workUrl","github");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("memberResp", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(model);
+        jacksonValue.setFilters(filterProvider);
+        return ResponseEntity.ok(jacksonValue);
+
     }
 
     @ApiOperation(value = "회원 전체 조회", notes = "등록된 회원 전체 조회")
@@ -68,11 +80,19 @@ public class MemberResource {
             @ApiResponse(code = 200, message = "회원 조회 성공"),
     })
     @RequestMapping(value = "/members", method = RequestMethod.GET)
-    public ResponseEntity<List<MemberResponse>> retrieveAllMembers() {
+    public ResponseEntity<MappingJacksonValue> retrieveAllMembers() {
         List<MemberDto> list = memberService.findAll();
         List<MemberResponse> collect = list.stream()
-                .map(memberDto -> new MemberResponse(memberDto)).collect(Collectors.toList());
-        return ResponseEntity.ok(collect);
+                .map(MemberResponse::new).collect(Collectors.toList());
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("memberId", "name", "email");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("memberResp", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(collect);
+        jacksonValue.setFilters(filterProvider);
+        return ResponseEntity.ok(jacksonValue);
     }
 
 
@@ -84,7 +104,7 @@ public class MemberResource {
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
-    public ResponseEntity<EntityModel<MemberResponse>> update(@RequestBody @Validated MemberUpdate memberUpdate
+    public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated MemberUpdate memberUpdate
             , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
         this.checkAuthentication(member, memberId);
         MemberDto memberDto = memberService.update(memberUpdate, memberId);
@@ -94,8 +114,14 @@ public class MemberResource {
                 .linkTo(WebMvcLinkBuilder.methodOn(MemberResource.class).memberService.findOne(memberId));
         model.add(linkBuilder.withRel("delete-member"));
         model.add(linkBuilder.withRel("search-member"));
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("memberId", "name", "email", "realName", "selfIntroduce","workUrl","github");
 
-        return ResponseEntity.accepted().body(model);
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("memberResp", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(model);
+        jacksonValue.setFilters(filterProvider);
+        return ResponseEntity.accepted().body(jacksonValue);
     }
 
     @ApiOperation(value = "회원 삭제", notes = "회원 아이디를 통해 회원 삭제")

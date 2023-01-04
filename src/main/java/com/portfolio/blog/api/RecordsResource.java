@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,7 +37,7 @@ public class RecordsResource {
             @ApiResponse(code = 401, message = "해당 권한 없음"),
     })
     @RequestMapping(value = "/records", method = RequestMethod.POST)
-    public ResponseEntity<URI> create(@RequestBody RecordCreate recordCreate, @AuthenticationPrincipal Member member) {
+    public ResponseEntity<URI> create(@RequestBody @Validated RecordCreate recordCreate, @AuthenticationPrincipal Member member) {
 
         String id = recordsService.save(recordCreate, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
