@@ -73,11 +73,11 @@ public class MemberService {
     }
 
     @Transactional
-    public String saveWorkUrl(WorkUrlCreate workUrlCreate, String memberId) {
+    public void saveWorkUrl(WorkUrlCreate workUrlCreate, String memberId) {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database")
         );
-        return member.addWorkUrl(workUrlCreate);
+        member.addWorkUrl(workUrlCreate);
     }
 
 

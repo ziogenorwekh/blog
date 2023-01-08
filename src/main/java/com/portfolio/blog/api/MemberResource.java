@@ -10,6 +10,7 @@ import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberResponse;
 import com.portfolio.blog.vo.member.MemberUpdate;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -55,6 +56,7 @@ public class MemberResource {
             @ApiResponse(code = 200, message = "회원 존재"),
             @ApiResponse(code = 404, message = "회원 존재하지 않음")
     })
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveMember(@PathVariable String memberId) {
         MemberDto memberDto = memberService.findOne(memberId);
@@ -103,6 +105,7 @@ public class MemberResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated MemberUpdate memberUpdate
             , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
@@ -130,6 +133,7 @@ public class MemberResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
         this.checkAuthentication(member, memberId);

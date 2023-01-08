@@ -42,7 +42,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,
             FileNotFoundException.class, CategoryNotMatchingException.class, RecordNotFountException.class
-            , WorkUrlNotFoundException.class})
+            , WorkUrlNotFoundException.class,RefreshTokenNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));

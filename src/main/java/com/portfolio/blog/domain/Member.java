@@ -97,10 +97,9 @@ public class Member {
         this.password = memberUpdate.getPassword();
     }
 
-    public String addWorkUrl(WorkUrlCreate workUrlCreate) {
+    public void addWorkUrl(WorkUrlCreate workUrlCreate) {
         WorkUrl workUrl = WorkUrl.create(workUrlCreate, this);
         workUrl.addMember(this);
-        return workUrl.getWorkUrlID();
     }
 
     public void delete() {

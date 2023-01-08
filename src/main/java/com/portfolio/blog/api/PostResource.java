@@ -46,7 +46,7 @@ public class PostResource {
             @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public ResponseEntity<URI> create(@RequestBody @Validated PostCreate postCreate, @AuthenticationPrincipal Member member) {
+    public ResponseEntity<URI> create(@RequestBody @Validated PostCreate postCreate, @AuthenticationPrincipal @ApiIgnore Member member) {
 
         Long id = postService.save(postCreate, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
@@ -58,6 +58,7 @@ public class PostResource {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "찾을 수 없음"),
     })
+    @ApiImplicitParam(name = "postId",value = "글 UUID")
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrievePost(@PathVariable String postId) {
 
@@ -108,6 +109,7 @@ public class PostResource {
             @ApiResponse(code = 401, message = "접근 권한 없음"),
             @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
+    @ApiImplicitParam(name = "postId",value = "글 UUID")
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated PostUpdate postUpdate,
                                                       @PathVariable String postId,

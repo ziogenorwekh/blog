@@ -54,39 +54,6 @@ public class UploadFileService {
         return uploadFile.getFileId();
     }
 
-    @Deprecated
-    @Transactional
-    public String saveHtml(MultipartFile multipartFile) {
-        String uuid = UUID.randomUUID().toString();
-        if (!multipartFile.getContentType().equals("text/html")) {
-            throw new WrongFileTypeException("Only possible html type file.");
-        }
-        S3Dto s3Dto = awsS3Service.upload(multipartFile, uuid);
-        UploadFile uploadFile = UploadFile.builder()
-                .filename(s3Dto.getFilename())
-                .fileId(uuid)
-                .fileUrl(s3Dto.getUploadUrl())
-                .mimetype(multipartFile.getContentType()).build();
-
-        uploadFileRepository.save(uploadFile);
-        URL url = null;
-        BufferedReader input = null;
-        String address = s3Dto.getUploadUrl();
-        String line = "";
-        String readHtml = "";
-        try {
-            url = new URL(address);
-            input = new BufferedReader(new InputStreamReader(url.openStream()));
-            while ((line = input.readLine()) != null) {
-                readHtml += line;
-            }
-            input.close();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return readHtml;
-    }
-
     @Transactional(readOnly = true)
     @SneakyThrows(IOException.class)
     public UploadFileDto findOne(String uuid) {
@@ -110,7 +77,6 @@ public class UploadFileService {
                 .orElseThrow(() -> new FileNotFoundException("file not in database"));
 
         awsS3Service.remove(uploadFile.getFilename());
-        uploadFile.delete();
         uploadFileRepository.delete(uploadFile);
     }
 

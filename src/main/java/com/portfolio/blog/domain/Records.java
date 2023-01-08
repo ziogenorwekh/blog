@@ -1,6 +1,7 @@
 package com.portfolio.blog.domain;
 
 import com.portfolio.blog.vo.records.RecordCreate;
+import com.portfolio.blog.vo.records.RecordsUpdate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,8 +39,10 @@ public class Records {
     private Member member;
 
 
+
+
     @Builder
-    public Records(String awardsTitle, String history, Date awardsDate, String recordId,String fileUrl) {
+    public Records(String awardsTitle, String history, Date awardsDate, String recordId, String fileUrl) {
         this.awardsTitle = awardsTitle;
         this.recordId = recordId;
         this.history = history;
@@ -60,13 +63,21 @@ public class Records {
         return records;
     }
 
+    public void update(RecordsUpdate recordsUpdate) {
+        this.fileUrl = recordsUpdate.getFileUrl();
+        this.awardsTitle = recordsUpdate.getAwardsTitle();
+        this.history = recordsUpdate.getHistory();
+        this.awardsDate = recordsUpdate.getAwardsDate();
+    }
+
     public void addMember(Member member) {
         this.member = member;
         member.getRecords().add(this);
     }
 
+
     public void delete() {
-        this.member = null;
         member.getRecords().remove(this);
+        this.member = null;
     }
 }

@@ -32,19 +32,15 @@ public class UploadFile {
     private Date insertDate;
 
 
-//    @ManyToOne
-//    @JoinColumn(name = "POST_ID")
-//    private Post post;
-
     @Builder
-    public UploadFile(String fileId, String filename,String mimetype, String fileUrl) {
+    public UploadFile(String fileId, String filename, String mimetype, String fileUrl) {
         this.fileId = fileId;
         this.filename = filename;
         this.mimetype = mimetype;
         this.fileUrl = fileUrl;
     }
 
-    public static UploadFile create(String fileId, String filename,String mimetype,String fileUrl, Post post) {
+    public static UploadFile create(String fileId, String filename, String mimetype, String fileUrl, Post post) {
         UploadFile uploadFile = UploadFile.builder()
                 .fileId(fileId)
                 .filename(filename)
@@ -54,9 +50,5 @@ public class UploadFile {
         return uploadFile;
     }
 
-
-    public void delete() {
-
-    }
 
 }

@@ -52,7 +52,8 @@ public class AuthenticationResource {
     })
     @RequestMapping(value = "/refresh", method = RequestMethod.GET)
     public ResponseEntity<Map<String, String>> refresh(@AuthenticationPrincipal @ApiIgnore Member member) {
-        Map<String, String> token = redisAuthenticationService.createToken(member.getMemberId());
+        // 여기 수정해야 됌
+        Map<String, String> token = redisAuthenticationService.reCreateAccess(member.getMemberId());
         return ResponseEntity.ok(token);
     }
 

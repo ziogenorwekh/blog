@@ -2,10 +2,12 @@ package com.portfolio.blog.redis;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.Role;
 import com.portfolio.blog.exception.EmailAuthenticationException;
 import com.portfolio.blog.exception.MemberNotFoundException;
+import com.portfolio.blog.exception.RefreshTokenNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.vo.Token;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +80,7 @@ public class RedisAuthenticationService {
 
     /**
      * first token create
+     *
      * @param memberId
      * @return
      */
@@ -112,8 +115,27 @@ public class RedisAuthenticationService {
         return accessToken;
     }
 
+    // 재발급 토큰을 가지고 있는 경우 -> redisRepo 에서 리프레시 토큰을 찾고 리프레시 토큰을 해석해서 액세스 토큰을 재발급.
+    @Transactional
+    public Map<String, String> reCreateAccess(String memberId) {
+        String refresh = redisRepo.findOne(memberId);
+        if (refresh == null) {
+            throw new RefreshTokenNotFoundException("refresh not in redis database");
+        }
+        String redisMemberId = JWT.decode(refresh).getSubject();
+        Member member = memberRepository.findMemberByMemberId(redisMemberId)
+                .orElseThrow(() -> new MemberNotFoundException("member not in database"));
+        Token token = Token.builder()
+                .name(member.getName())
+                .memberId(member.getMemberId())
+                .roles(member.getRoles().stream().map(Role::getRole).collect(Collectors.toList()))
+                .build();
+        return createAccess(token);
+    }
+
     /**
      * refresh Token create -> redis in
+     *
      * @param token
      */
     @Transactional
@@ -133,4 +155,5 @@ public class RedisAuthenticationService {
     public String decodeTokenGetIssuer(String token) {
         return JWT.decode(token).getIssuer();
     }
+
 }
