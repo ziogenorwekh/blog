@@ -36,6 +36,7 @@ import java.util.Map;
 public class AuthenticationResource {
 
     private final RedisAuthenticationService redisAuthenticationService;
+//    임시 DI
     private final MemberService memberService;
 
 
