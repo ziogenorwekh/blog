@@ -24,16 +24,16 @@ public class MemberUpdate {
 
     @ApiParam(value = "사용자 깃허브 아이디")
     @ApiModelProperty(example = "github_id")
-    @NotBlank(message = "깃허브 아이디를 입력해주세요")
+//    @NotBlank(message = "깃허브 아이디를 입력해주세요")
     private String github;
 
     @ApiModelProperty(example = "안녕하세요. ㅁㅁㅁ입니다.")
     @ApiParam(value = "사용자 자기소개")
     private String selfIntroduce;
 
-    @ApiParam(value = "사용자 비밀번호", required = true)
-    @ApiModelProperty(example = "password1!")
-    @Size(min = 4,message = "최소 네글자 이상의 비밀번호를 입력해주세요.")
-    private String password;
+    @ApiModelProperty(example = "http://127.0.0.1/work~")
+    @ApiParam(value = "사용자 작품 URL")
+    private String url;
+
 
 }

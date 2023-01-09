@@ -114,7 +114,7 @@ public class MemberResource {
 
         EntityModel<MemberResponse> model = EntityModel.of(new MemberResponse(memberDto));
         WebMvcLinkBuilder linkBuilder = WebMvcLinkBuilder
-                .linkTo(WebMvcLinkBuilder.methodOn(MemberResource.class).memberService.findOne(memberId));
+                .linkTo(WebMvcLinkBuilder.methodOn(MemberResource.class).retrieveMember(memberId));
         model.add(linkBuilder.withRel("delete-member"));
         model.add(linkBuilder.withRel("search-member"));
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter

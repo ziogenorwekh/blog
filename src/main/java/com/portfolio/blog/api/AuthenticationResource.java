@@ -1,21 +1,30 @@
 package com.portfolio.blog.api;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.portfolio.blog.domain.Member;
+import com.portfolio.blog.dto.MemberDto;
 import com.portfolio.blog.exception.MemberNotFoundException;
+import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.redis.RedisAuthenticationService;
+import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.vo.EmailVerify;
+import com.portfolio.blog.vo.member.MemberPwdUpdate;
+import com.portfolio.blog.vo.member.MemberResponse;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Map;
@@ -27,6 +36,7 @@ import java.util.Map;
 public class AuthenticationResource {
 
     private final RedisAuthenticationService redisAuthenticationService;
+    private final MemberService memberService;
 
 
     @ApiOperation(value = "회원 등록 이메일 전송", notes = "가입한 회원이 권한 부여받도록 메일을 전송")
@@ -45,7 +55,7 @@ public class AuthenticationResource {
     }
 
 
-    @ApiOperation(value = "토큰 재발급", notes = "액세스 토큰을 재발급하고, 재발급 토큰을 redis 에 저장합니다.")
+    @ApiOperation(value = "토큰 재발급", notes = "액세스 토큰을 재발급")
     @ApiResponses({
             @ApiResponse(code = 200, message = "재발급 성공"),
             @ApiResponse(code = 404, message = "해당 회원 존재하지 않음"),
@@ -66,5 +76,36 @@ public class AuthenticationResource {
         }
         redisAuthenticationService.deleteRefresh(member.getMemberId());
         return ResponseEntity.ok().build();
+    }
+
+
+    // 후에는 메일 인증으로 비밀번호 변경 예정
+    @ApiOperation(value = "회원 비밀번호 수정", notes = "회원 비밀번호를 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 202, message = "수정 성공"),
+            @ApiResponse(code = 400, message = "조건에 맞지 않는 폼 형식"),
+            @ApiResponse(code = 401, message = "권한 없는 접근"),
+            @ApiResponse(code = 404, message = "존재하지 않음")
+    })
+    @ApiImplicitParam(name = "memberId", value = "회원 UUID")
+    @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
+    public ResponseEntity<MappingJacksonValue> updateMemberPwd(@PathVariable String memberId,
+                                                               @AuthenticationPrincipal @ApiIgnore Member member,
+                                                               @RequestBody @Validated MemberPwdUpdate memberPwdUpdate) {
+        if (member == null || !member.getMemberId().equals(memberId)) {
+            throw new UnAuthenticationAccessException("You do not have permission.");
+        }
+
+        MemberDto memberDto = memberService.updatePwd(memberPwdUpdate, member.getMemberId());
+
+        MemberResponse memberResponse = new MemberResponse(memberDto);
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept("memberId", "name", "email", "realName", "selfIntroduce", "workUrl", "github");
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("memberResp", filter);
+
+        MappingJacksonValue jacksonValue = new MappingJacksonValue(memberResponse);
+        jacksonValue.setFilters(filterProvider);
+        return ResponseEntity.accepted().body(jacksonValue);
     }
 }

@@ -23,8 +23,7 @@ public class MemberDto implements Serializable {
     private String name;
     private String realName;
     private String selfIntroduce;
-    private List<WorkUrlDto> workUrls;
-
+    private String workUrl;
     private String github;
 
     public MemberDto(Member member) {
@@ -35,7 +34,6 @@ public class MemberDto implements Serializable {
         this.github = member.getGithub();
         this.realName = member.getRealName();
         this.selfIntroduce = member.getSelfIntroduce();
-        this.workUrls = member.getWorkUrls().stream().map(workUrl -> new ModelMapper()
-                .map(workUrl,WorkUrlDto.class)).collect(Collectors.toList());
+        this.workUrl = member.getWorkUrl();
     }
 }

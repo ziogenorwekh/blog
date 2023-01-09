@@ -6,10 +6,11 @@ import com.portfolio.blog.exception.DuplicatedEmailException;
 import com.portfolio.blog.exception.DuplicatedNameException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
-import com.portfolio.blog.vo.WorkUrlCreate;
 import com.portfolio.blog.vo.member.MemberCreate;
+import com.portfolio.blog.vo.member.MemberPwdUpdate;
 import com.portfolio.blog.vo.member.MemberUpdate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -29,8 +31,9 @@ public class MemberService {
     public String save(MemberCreate memberCreate) {
         validateDuplicatedEmail(memberCreate.getEmail());
         validateDuplicatedName(memberCreate.getName());
+        String rawPassword = memberCreate.getPassword();
         memberCreate.setPassword(passwordEncoder.encode(memberCreate.getPassword()));
-        Member member = Member.create(memberCreate);
+        Member member = Member.create(memberCreate, rawPassword);
         memberRepository.save(member);
         return member.getMemberId();
     }
@@ -55,9 +58,20 @@ public class MemberService {
         Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
                 new MemberNotFoundException("member not in database")
         );
-        validateDuplicatedName(memberUpdate.getName());
-        memberUpdate.setPassword(passwordEncoder.encode(memberUpdate.getPassword()));
+        if (!member.getName().equals(memberUpdate.getName())) {
+            validateDuplicatedName(memberUpdate.getName());
+        }
         member.update(memberUpdate);
+        return new ModelMapper().map(member, MemberDto.class);
+    }
+
+    @Transactional
+    public MemberDto updatePwd(MemberPwdUpdate memberPwdUpdate, String memberId) {
+        Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
+                new MemberNotFoundException("member not in database")
+        );
+        memberPwdUpdate.setPassword(passwordEncoder.encode(memberPwdUpdate.getPassword()));
+        member.updatePwd(memberPwdUpdate);
         return new ModelMapper().map(member, MemberDto.class);
     }
 
@@ -70,14 +84,6 @@ public class MemberService {
 //        영속 전이와 고아 객체 제거로 타 Table 데이터 전체 제거
         member.delete();
         memberRepository.delete(member);
-    }
-
-    @Transactional
-    public void saveWorkUrl(WorkUrlCreate workUrlCreate, String memberId) {
-        Member member = memberRepository.findMemberByMemberId(memberId).orElseThrow(() ->
-                new MemberNotFoundException("member not in database")
-        );
-        member.addWorkUrl(workUrlCreate);
     }
 
 
@@ -96,6 +102,8 @@ public class MemberService {
     @Transactional
     public void testVerified(String memberId) {
         Optional<Member> member = memberRepository.findMemberByMemberId(memberId);
+        member.get().setWorkUrl("http://127.0.0.1/work");
+        member.get().setGithub("ziogenorwekh");
         member.get().verified();
     }
 }

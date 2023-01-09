@@ -28,10 +28,6 @@ public class MemberCreate {
     @Size(min = 2, message = "최소 두 글자 이름을 입력해주시길 바랍니다.")
     private String realName;
 
-    @ApiParam(value = "사용자 깃허브 아이디")
-    @ApiModelProperty(example = "github_id")
-    @NotBlank(message = "깃허브 아이디를 입력해주세요")
-    private String github;
 
     @ApiParam(value = "사용자 비밀번호", required = true)
     @ApiModelProperty(example = "password1!")

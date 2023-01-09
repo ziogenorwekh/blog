@@ -2,6 +2,7 @@ package com.portfolio.blog.exceptionhandler;
 
 import com.portfolio.blog.exception.*;
 import com.portfolio.blog.vo.ExceptionResponse;
+import io.lettuce.core.RedisCommandExecutionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,
             FileNotFoundException.class, CategoryNotMatchingException.class, RecordNotFountException.class
-            , WorkUrlNotFoundException.class,RefreshTokenNotFoundException.class})
+            , WorkUrlNotFoundException.class, RefreshTokenNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
@@ -58,7 +59,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(WrongFileTypeException.class)
+    @ExceptionHandler({WrongFileTypeException.class, PasswordNotMatchedException.class})
     public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(),
                 e.getMessage(), webRequest.getDescription(false));
@@ -86,7 +87,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.GONE);
     }
 
-    @ExceptionHandler(IOException.class)
+    @ExceptionHandler({IOException.class, RedisCommandExecutionException.class})
     public ResponseEntity<ExceptionResponse> handleIO(WebRequest webRequest) {
         ExceptionResponse response = new ExceptionResponse(new Date(), "server error",
                 webRequest.getDescription(false));

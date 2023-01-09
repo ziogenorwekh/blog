@@ -37,7 +37,7 @@ public class MemberResponse {
     @ApiParam(value = "사용자 깃허브 아이디")
     private String github;
 
-    private List<String> workUrl;
+    private String workUrl;
 
     public MemberResponse(MemberDto memberDto) {
         this.memberId = memberDto.getMemberId();
@@ -46,6 +46,6 @@ public class MemberResponse {
         this.realName = memberDto.getRealName();
         this.github = memberDto.getGithub();
         this.selfIntroduce = memberDto.getSelfIntroduce();
-        this.workUrl = memberDto.getWorkUrls().stream().map(workUrlDto -> workUrlDto.getUrl()).collect(Collectors.toList());
+        this.workUrl = memberDto.getWorkUrl();
     }
 }
