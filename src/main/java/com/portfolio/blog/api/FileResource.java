@@ -38,9 +38,12 @@ public class FileResource {
     @ApiResponses({
             @ApiResponse(code = 201, message = "저장 성공"),
             @ApiResponse(code = 500, message = "aws 버킷 에러"),
+            @ApiResponse(code = 400, message = "지원되지 않는 형식")
     })
-    @RequestMapping(value = "/images", method = RequestMethod.POST)
-    public ResponseEntity<URI> saveImages(@RequestParam(value = "upload") @ApiIgnore MultipartFile upload) {
+    @RequestMapping(value = "/images", method = RequestMethod.POST, produces = {
+            MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE
+    })
+    public ResponseEntity<URI> saveImages(@RequestPart(value = "upload") @ApiIgnore MultipartFile upload) {
         String id = uploadFileService.save(upload);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
@@ -66,15 +69,16 @@ public class FileResource {
 
     /**
      * Test
+     *
      * @return
      */
-    @RequestMapping(value = "/files",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/files", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteAll() {
         uploadFileService.deleteAll();
         return ResponseEntity.ok().build();
     }
 
-//    딱히 필요없는?
+    //    딱히 필요없는?
     @ApiOperation(value = "파일 전체 조회", notes = "파일의 정보를 전체 조회합니다.")
     @ApiResponse(code = 200, message = "조회 성공")
     @RequestMapping(value = "/files", method = RequestMethod.GET)

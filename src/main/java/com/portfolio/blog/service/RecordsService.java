@@ -8,7 +8,7 @@ import com.portfolio.blog.exception.RecordNotFountException;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.repo.RecordsRepository;
-import com.portfolio.blog.vo.records.RecordCreate;
+import com.portfolio.blog.vo.records.RecordsCreate;
 import com.portfolio.blog.vo.records.RecordsUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +26,10 @@ public class RecordsService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public String save(RecordCreate recordCreate, String memberId) {
+    public String save(RecordsCreate recordsCreate, String memberId) {
         Member member = memberRepository.findMemberByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));
-        Records records = Records.create(recordCreate, member);
+        Records records = Records.create(recordsCreate, member);
         recordsRepository.save(records);
         return records.getRecordId();
     }

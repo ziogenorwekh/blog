@@ -1,5 +1,6 @@
 package com.portfolio.blog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.portfolio.blog.exception.PasswordNotMatchedException;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberPwdUpdate;
@@ -43,8 +44,10 @@ public class Member {
     private String github;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     private String rawPassword;
 
     @Setter

@@ -75,7 +75,6 @@ public class UploadFileService {
     public void delete(String fileId) {
         UploadFile uploadFile = uploadFileRepository.findUploadFileByFileId(fileId)
                 .orElseThrow(() -> new FileNotFoundException("file not in database"));
-
         awsS3Service.remove(uploadFile.getFilename());
         uploadFileRepository.delete(uploadFile);
     }

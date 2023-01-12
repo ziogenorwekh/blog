@@ -141,7 +141,7 @@ public class RedisAuthenticationService {
     @Transactional
     protected void createRefresh(Token token) {
         String isAlready = redisRepo.findOne(token.getMemberId());
-        // 사용자가 access 토큰을 그냥 초기화해버렸을 때 다시 로그인하면 redis 에 있던 기존 데이터 사제
+        // 사용자가 access 토큰을 그냥 초기화해버렸을 때 다시 로그인하면 redis 에 있던 기존 데이터 삭제
         if (isAlready != null) {
             redisRepo.delete(token.getMemberId());
         }

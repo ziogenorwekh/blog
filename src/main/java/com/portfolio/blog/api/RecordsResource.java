@@ -1,13 +1,12 @@
 package com.portfolio.blog.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.dto.RecordsDto;
 import com.portfolio.blog.service.RecordsService;
-import com.portfolio.blog.vo.records.RecordCreate;
+import com.portfolio.blog.vo.records.RecordsCreate;
 import com.portfolio.blog.vo.records.RecordsUpdate;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -42,10 +41,10 @@ public class RecordsResource {
             @ApiResponse(code = 401, message = "해당 권한 없음"),
     })
     @RequestMapping(value = "/records", method = RequestMethod.POST)
-    public ResponseEntity<URI> create(@RequestBody @Validated RecordCreate recordCreate,
+    public ResponseEntity<URI> create(@RequestBody @Validated RecordsCreate recordsCreate,
                                       @AuthenticationPrincipal @ApiIgnore Member member) {
 
-        String id = recordsService.save(recordCreate, member.getMemberId());
+        String id = recordsService.save(recordsCreate, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
     }

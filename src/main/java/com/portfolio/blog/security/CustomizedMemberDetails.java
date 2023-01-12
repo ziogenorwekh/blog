@@ -65,6 +65,6 @@ public class CustomizedMemberDetails implements UserDetails {
     public boolean isEnabled() {
         Optional<Role> role_no_auth = member.getRoles().stream()
                 .filter(role -> role.getRole().equals("ROLE_NO_AUTH")).findAny();
-        return !role_no_auth.isPresent();
+        return role_no_auth.isEmpty();
     }
 }

@@ -1,6 +1,7 @@
 package com.portfolio.blog.dto;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.portfolio.blog.domain.Records;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +27,7 @@ public class RecordsDto implements Serializable {
     private String history;
     @ApiParam(value = "수상 일자")
     @ApiModelProperty(example = "20-08-12")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yy-MM-dd")
     private Date awardsDate;
     @ApiParam(value = "수상자 아이디")
     @ApiModelProperty(example = "lsek")

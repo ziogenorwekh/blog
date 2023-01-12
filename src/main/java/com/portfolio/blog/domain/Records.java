@@ -1,6 +1,6 @@
 package com.portfolio.blog.domain;
 
-import com.portfolio.blog.vo.records.RecordCreate;
+import com.portfolio.blog.vo.records.RecordsCreate;
 import com.portfolio.blog.vo.records.RecordsUpdate;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,14 +50,14 @@ public class Records {
         this.awardsDate = awardsDate;
     }
 
-    public static Records create(RecordCreate recordCreate, Member member) {
+    public static Records create(RecordsCreate recordsCreate, Member member) {
         String uuid = UUID.randomUUID().toString();
         Records records = Records.builder()
                 .recordId(uuid)
-                .awardsDate(recordCreate.getAwardsDate())
-                .history(recordCreate.getHistory())
-                .awardsTitle(recordCreate.getAwardsTitle())
-                .fileUrl(recordCreate.getFileUrl())
+                .awardsDate(recordsCreate.getAwardsDate())
+                .history(recordsCreate.getHistory())
+                .awardsTitle(recordsCreate.getAwardsTitle())
+                .fileUrl(recordsCreate.getFileUrl())
                 .build();
         records.addMember(member);
         return records;

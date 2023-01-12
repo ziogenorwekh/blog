@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler({WrongFileTypeException.class, PasswordNotMatchedException.class})
+    @ExceptionHandler({WrongFileTypeException.class, PasswordNotMatchedException.class, CustomizedMissingServletRequestPartException.class})
     public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(),
                 e.getMessage(), webRequest.getDescription(false));
