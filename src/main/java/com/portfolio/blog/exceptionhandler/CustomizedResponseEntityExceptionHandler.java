@@ -1,9 +1,12 @@
 package com.portfolio.blog.exceptionhandler;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.portfolio.blog.exception.*;
 import com.portfolio.blog.vo.ExceptionResponse;
 import io.lettuce.core.RedisCommandExecutionException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +47,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler({MemberNotFoundException.class, PostNotFoundException.class,
             FileNotFoundException.class, CategoryNotMatchingException.class, RecordNotFountException.class
-            , WorkUrlNotFoundException.class, RefreshTokenNotFoundException.class})
+            , WorkUrlNotFoundException.class, RefreshTokenNotFoundException.class
+            , TypeNotMatchingException.class,ActivityNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
@@ -60,7 +64,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler({WrongFileTypeException.class, PasswordNotMatchedException.class, CustomizedMissingServletRequestPartException.class})
+    @ExceptionHandler({WrongFileTypeException.class, PasswordNotMatchedException.class,
+            CustomizedMissingServletRequestPartException.class})
     public ResponseEntity<ExceptionResponse> handleWrongFileType(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(),
                 e.getMessage(), webRequest.getDescription(false));
@@ -81,14 +86,14 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(EmailAuthenticationException.class)
+    @ExceptionHandler({EmailAuthenticationException.class})
     public ResponseEntity<ExceptionResponse> handleAuthGone(WebRequest webRequest, Exception e) {
         ExceptionResponse response = new ExceptionResponse(new Date(), e.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.GONE);
     }
 
-    @ExceptionHandler({IOException.class, RedisCommandExecutionException.class})
+    @ExceptionHandler({IOException.class, RedisCommandExecutionException.class, RedisConnectionFailureException.class})
     public ResponseEntity<ExceptionResponse> handleIO(WebRequest webRequest) {
         ExceptionResponse response = new ExceptionResponse(new Date(), "server error",
                 webRequest.getDescription(false));

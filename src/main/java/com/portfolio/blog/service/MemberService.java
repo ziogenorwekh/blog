@@ -104,6 +104,13 @@ public class MemberService {
         Optional<Member> member = memberRepository.findMemberByMemberId(memberId);
         member.get().setWorkUrl("http://127.0.0.1/work");
         member.get().setGithub("ziogenorwekh");
+        member.get().setSelfIntroduce("<p><span style=\"color: rgb(255, 255, 102);" +
+                "\">Hello! </span><span style=\"color: rgb(255, 255, 255);\">" +
+                "Lorem ipsum dolor sit amet, consectetur adipisicing elit. " +
+                "Dolore enim fugit minima minus nemo suscipit? </span>" +
+                "<span style=\"color: rgb(230, 0, 0);\">A accusamus eos</span>" +
+                "<span style=\"color: rgb(255, 255, 255);\"> est facilis magnam modi nihil similique, " +
+                "tempore, ullam unde, veritatis voluptas? Quia!</span></p>");
         member.get().verified();
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.portfolio.blog.dto.UploadFileDto;
 import com.portfolio.blog.service.UploadFileService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -51,11 +52,12 @@ public class FileResource {
 
 
     @SneakyThrows(IOException.class)
-    @ApiOperation(value = "이미지 조회", notes = "UUID 값에서 이미지을 조회합니다.")
+    @ApiOperation(value = "이미지 조회", notes = "UUID 값에서 이미지을 리턴합니다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "해당 파일 존재하지 않음"),
     })
+    @ApiImplicitParam(name = "fileId",value = "파일 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/images/{fileId}", method = RequestMethod.GET, produces = {
             MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE
     })
@@ -69,7 +71,6 @@ public class FileResource {
 
     /**
      * Test
-     *
      * @return
      */
     @RequestMapping(value = "/files", method = RequestMethod.DELETE)

@@ -1,6 +1,7 @@
 package com.portfolio.blog.security;
 
 import com.portfolio.blog.exceptionhandler.CustomizedAccessDeniedHandler;
+import com.portfolio.blog.exceptionhandler.CustomizedAuthenticationEntryPoint;
 import com.portfolio.blog.redis.RedisAuthenticationService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class SecurityConfig {
     private CustomizedMemberDetailsService detailsService;
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,RedisAuthenticationService redisAuthenticationService
-    ,CustomizedMemberDetailsService detailsService) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, RedisAuthenticationService redisAuthenticationService
+            , CustomizedMemberDetailsService detailsService) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.redisAuthenticationService = redisAuthenticationService;
         this.detailsService = detailsService;
@@ -41,11 +42,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) {
 
         JwtAuthenticationFilter jwtAuthenticationFilter =
-                new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration),redisAuthenticationService);
-        JwtAuthorizationFilter jwtAuthorizationFilter =
-                new JwtAuthorizationFilter(authenticationManager(authenticationConfiguration)
-                        , detailsService, redisAuthenticationService);
-
+                new JwtAuthenticationFilter(authenticationManager(authenticationConfiguration), redisAuthenticationService);
         http.httpBasic().disable();
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -56,8 +53,9 @@ public class SecurityConfig {
 //        http.authorizeRequests().antMatchers(HttpMethod.PUT).hasRole("USER");
         http.authorizeRequests().antMatchers("/**").permitAll();
         http.addFilter(jwtAuthenticationFilter)
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling().accessDeniedHandler(new CustomizedAccessDeniedHandler());
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(authenticationConfiguration),detailsService, redisAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling().accessDeniedHandler(new CustomizedAccessDeniedHandler())
+                .authenticationEntryPoint(new CustomizedAuthenticationEntryPoint());
         return http.build();
     }
 

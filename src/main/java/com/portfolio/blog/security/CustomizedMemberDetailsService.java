@@ -19,13 +19,12 @@ public class CustomizedMemberDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug(username);
         Member member = memberRepository.findMemberByName(username)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));
 
-        UserDetails userDetails = new CustomizedMemberDetails(member);
-        return userDetails;
+        return new CustomizedMemberDetails(member);
     }
 }

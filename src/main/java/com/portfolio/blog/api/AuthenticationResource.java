@@ -10,6 +10,7 @@ import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.redis.RedisAuthenticationService;
 import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.vo.EmailVerify;
+import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberPwdUpdate;
 import com.portfolio.blog.vo.member.MemberResponse;
 import io.swagger.annotations.ApiImplicitParam;
@@ -25,8 +26,10 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.net.URI;
 import java.util.Map;
 
 @Slf4j
@@ -79,6 +82,21 @@ public class AuthenticationResource {
         return ResponseEntity.ok().build();
     }
 
+//    @ApiOperation(value = "회원가입", notes = "지정된 폼 형식에 맞는 회원 가입")
+//    @ApiResponses({
+//            @ApiResponse(code = 201, message = "회원가입 성공"),
+//            @ApiResponse(code = 400, message = "지정된 폼 형식에 맞지 않음")
+//    })
+//    @RequestMapping(value = "/members", method = RequestMethod.POST)
+//    public ResponseEntity<URI> createMember(@RequestBody @Validated MemberCreate memberCreate) {
+//
+////        Long id = method.save(null);
+//        memberService.save(memberCreate);
+////        redisAuthenticationService.
+//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+//        return ResponseEntity.created(uri).build();
+//    }
+
 
     // 후에는 메일 인증으로 비밀번호 변경 예정
     @ApiOperation(value = "회원 비밀번호 수정", notes = "회원 비밀번호를 수정합니다.")
@@ -88,7 +106,7 @@ public class AuthenticationResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
-    @ApiImplicitParam(name = "memberId", value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId", value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> updateMemberPwd(@PathVariable String memberId,
                                                                @AuthenticationPrincipal @ApiIgnore Member member,

@@ -43,10 +43,6 @@ public class Post {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-
-//    @OneToMany(mappedBy = "post",orphanRemoval = true,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-//    private List<UploadFile> files = new ArrayList<>();
-
     @Builder
     public Post(String title, String contents,Category category) {
         this.postId = UUID.randomUUID().toString();

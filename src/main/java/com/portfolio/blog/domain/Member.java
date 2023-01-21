@@ -1,6 +1,7 @@
 package com.portfolio.blog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.portfolio.blog.domain.activity.Activity;
 import com.portfolio.blog.exception.PasswordNotMatchedException;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberPwdUpdate;
@@ -38,6 +39,7 @@ public class Member {
     private String realName;
 
     @Lob
+    @Setter
     private String selfIntroduce;
 
     @Setter
@@ -62,6 +64,8 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Records> records = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Activity> activities = new ArrayList<>();
 
 
 
@@ -121,5 +125,6 @@ public class Member {
         this.getRoles().clear();
         this.getPosts().clear();
         this.getRecords().clear();
+        this.getActivities().clear();
     }
 }

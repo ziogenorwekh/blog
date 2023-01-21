@@ -27,7 +27,6 @@ public class CustomizedMemberDetails implements UserDetails {
                 return role.getRole();
             }
         }));
-
         return grantedAuthorities;
     }
 

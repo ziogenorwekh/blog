@@ -29,16 +29,25 @@ public class BlogApplication {
 
 
 
-    @PostConstruct
+//    @PostConstruct
     public void test() {
         MemberCreate memberCreate = new MemberCreate();
-        memberCreate.setEmail("email@email.com");
-        memberCreate.setName("ziogenorwekh");
-        memberCreate.setRealName("김철수");
+        memberCreate.setEmail("myEmail@embeddedhello.com");
+        memberCreate.setName("usernameZIOGENOR");
+        memberCreate.setRealName("PIO");
         memberCreate.setPassword("1!");
 
         String memberId = memberService.save(memberCreate);
         memberService.testVerified(memberId);
+
+        MemberCreate memberCreate1 = new MemberCreate();
+        memberCreate.setEmail("leeseoho@korea.com");
+        memberCreate.setName("usernameLSEK");
+        memberCreate.setRealName("UIO");
+        memberCreate.setPassword("1!");
+
+        String memberId1 = memberService.save(memberCreate);
+        memberService.testVerified(memberId1);
 
 
 //        WorkUrlCreate workUrlCreate = new WorkUrlCreate();

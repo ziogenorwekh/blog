@@ -7,7 +7,6 @@ import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.PostSearch;
 import com.portfolio.blog.dto.PostDto;
 import com.portfolio.blog.service.PostService;
-import com.portfolio.blog.vo.post.CategoryReq;
 import com.portfolio.blog.vo.post.PostCreate;
 import com.portfolio.blog.vo.post.PostResponse;
 import com.portfolio.blog.vo.post.PostUpdate;
@@ -58,7 +57,7 @@ public class PostResource {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "찾을 수 없음"),
     })
-    @ApiImplicitParam(name = "postId",value = "글 UUID")
+    @ApiImplicitParam(name = "postId",value = "글 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrievePost(@PathVariable String postId) {
 
@@ -83,7 +82,7 @@ public class PostResource {
 
     @ApiOperation(value = "특정 회원 작성 글 조회", notes = "특정 회원이 작성한 모든 글을 조회합니다.")
     @ApiResponse(code = 200, message = "조회 성공")
-    @ApiImplicitParam(name = "memberId", value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId", value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "{memberId}/posts", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveMemberPosts(@PathVariable String memberId) {
         List<PostDto> list = postService.findAllByMemberId(memberId);
@@ -92,8 +91,8 @@ public class PostResource {
 
     @ApiOperation(value = "특정 회원 작성 글 조회", notes = "특정 회원이 작성한 모든 글을 카테고리별로 조회합니다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "memberId", value = "회원 UUID"),
-            @ApiImplicitParam(name = "category", value = "카테고리")
+            @ApiImplicitParam(name = "memberId", value = "회원 UUID",dataTypeClass = String.class),
+            @ApiImplicitParam(name = "category", value = "카테고리",dataTypeClass = Enum.class)
     })
     @RequestMapping(value = "{memberId}/posts/{category}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveMemberPostsByCategory(@PathVariable String memberId
@@ -109,7 +108,7 @@ public class PostResource {
             @ApiResponse(code = 401, message = "접근 권한 없음"),
             @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
-    @ApiImplicitParam(name = "postId",value = "글 UUID")
+    @ApiImplicitParam(name = "postId",value = "글 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated PostUpdate postUpdate,
                                                       @PathVariable String postId,

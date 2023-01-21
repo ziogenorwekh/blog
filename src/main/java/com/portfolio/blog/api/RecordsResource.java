@@ -51,7 +51,7 @@ public class RecordsResource {
 
     @ApiOperation(value = "해당하는 회원의 자격 전체 조회", notes = "해당하는 회원의 수상 내역이나 자격증을 전체 조회합니다.")
     @ApiResponse(code = 200, message = "성공")
-    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/{memberId}/records", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveAllRecordsByMember(@PathVariable String memberId) {
         List<RecordsDto> list = recordsService.findOneByMember(memberId);
@@ -73,7 +73,7 @@ public class RecordsResource {
             @ApiResponse(code = 401, message = "권한 없음"),
             @ApiResponse(code = 400, message = "폼 형식에 맞지 않음")
     })
-    @ApiImplicitParam(name = "recordsId",value = "기록 UUID")
+    @ApiImplicitParam(name = "recordsId",value = "기록 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/records/{recordsId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@PathVariable String recordsId,
                                                       @RequestBody @Validated RecordsUpdate recordsUpdate,
@@ -102,7 +102,7 @@ public class RecordsResource {
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
-    @ApiImplicitParam(name = "recordsId",value = "기록 UUID")
+    @ApiImplicitParam(name = "recordsId",value = "기록 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/records/{recordsId}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveRecords(@PathVariable String recordsId) {
 
@@ -131,7 +131,7 @@ public class RecordsResource {
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "해당 권한 없음")
     })
-    @ApiImplicitParam(name = "recordsId",value = "기록 UUID")
+    @ApiImplicitParam(name = "recordsId",value = "기록 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/records/{recordsId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String recordsId,
                                        @AuthenticationPrincipal @ApiIgnore Member member) {

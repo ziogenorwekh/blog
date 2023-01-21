@@ -13,7 +13,7 @@ public class MemberUpdate {
     @ApiParam(value = "사용자 아이디", required = true)
     @ApiModelProperty(example = "lsek")
     @NotBlank(message = "빈 값은 허용되지 않습니다.")
-    @Size(min = 3,message = "최소 세글자 이상의 이름을 입력해주세요.")
+    @Size(min = 3, message = "최소 세글자 이상의 이름을 입력해주세요.")
     private String name;
 
     @ApiParam(value = "사용자 이름", required = true)
@@ -24,7 +24,6 @@ public class MemberUpdate {
 
     @ApiParam(value = "사용자 깃허브 아이디")
     @ApiModelProperty(example = "github_id")
-//    @NotBlank(message = "깃허브 아이디를 입력해주세요")
     private String github;
 
     @ApiModelProperty(example = "안녕하세요. ㅁㅁㅁ입니다.")

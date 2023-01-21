@@ -72,6 +72,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                               AuthenticationException failed) {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.addHeader("Error", "Login Failed");
+        response.addHeader("Error", "Invalidated id or password");
     }
 }

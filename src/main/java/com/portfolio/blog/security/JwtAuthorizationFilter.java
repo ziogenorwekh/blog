@@ -2,9 +2,15 @@ package com.portfolio.blog.security;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.redis.RedisAuthenticationService;
+import com.portfolio.blog.vo.ExceptionResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,12 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Date;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+
 
     private CustomizedMemberDetailsService memberDetailsService;
     private RedisAuthenticationService redisAuthenticationService;
@@ -36,14 +44,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         this.redisAuthenticationService = redisAuthenticationService;
     }
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
         log.debug("doFilterInternal");
         String header = request.getHeader(AUTHORIZATION);
+        log.debug(request.getMethod());
+
+        // 수정해야 됌
         if (header == null || !header.startsWith("Bearer ") || request.getServletPath().equals("/login")
-                || request.getServletPath().equals("/api/refresh")) {
+                || request.getServletPath().equals("/api/fresh") || request.getMethod().equals(HttpMethod.GET)) {
             chain.doFilter(request, response);
+            return;
+        }
+        if (header == null && (request.getMethod().equals(HttpMethod.POST) ||
+                request.getMethod().equals(HttpMethod.PUT) || request.getMethod().equals(HttpMethod.DELETE))) {
+            exceptionHandler(new UnAuthenticationAccessException("a wrong approach"), HttpStatus.UNAUTHORIZED, response);
             return;
         }
 
@@ -66,21 +83,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     new UsernamePasswordAuthenticationToken(memberDetails.getMember(),
                             null, memberDetails.getAuthorities());
         } catch (JWTDecodeException e) {
-            log.error(e.getMessage());
-            exceptionHandler(response, e, HttpServletResponse.SC_BAD_REQUEST);
+            exceptionHandler(e, HttpStatus.BAD_REQUEST, response);
         } catch (TokenExpiredException e) {
-            log.error(e.getMessage());
-            exceptionHandler(response, e, HttpServletResponse.SC_GONE);
+            exceptionHandler(e, HttpStatus.GONE, response);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            exceptionHandler(response, e, HttpServletResponse.SC_UNAUTHORIZED);
+            exceptionHandler(e, HttpStatus.UNAUTHORIZED, response);
         }
         return authenticationToken;
     }
 
-    private void exceptionHandler(HttpServletResponse response, Exception e, int status) {
+    @SneakyThrows
+    private void exceptionHandler(Exception e, HttpStatus status, HttpServletResponse response) {
+
         response.setContentType(APPLICATION_JSON_VALUE);
-        response.setStatus(status);
-        response.addHeader("Error", e.getMessage());
+        response.setStatus(status.value());
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), e.getMessage());
+        new ObjectMapper().writeValue(response.getWriter(), exceptionResponse);
     }
 }

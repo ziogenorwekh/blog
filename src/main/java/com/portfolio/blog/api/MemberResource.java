@@ -42,7 +42,8 @@ public class MemberResource {
     @ApiOperation(value = "회원가입", notes = "지정된 폼 형식에 맞는 회원 가입")
     @ApiResponses({
             @ApiResponse(code = 201, message = "회원가입 성공"),
-            @ApiResponse(code = 400, message = "지정된 폼 형식에 맞지 않음")
+            @ApiResponse(code = 400, message = "지정된 폼 형식에 맞지 않음"),
+            @ApiResponse(code = 409, message = "중복된 데이터"),
     })
     @RequestMapping(value = "/members", method = RequestMethod.POST)
     public ResponseEntity<URI> create(@RequestBody @Validated MemberCreate memberCreate) {
@@ -56,7 +57,7 @@ public class MemberResource {
             @ApiResponse(code = 200, message = "회원 존재"),
             @ApiResponse(code = 404, message = "회원 존재하지 않음")
     })
-    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.GET)
     public ResponseEntity<MappingJacksonValue> retrieveMember(@PathVariable String memberId) {
         MemberDto memberDto = memberService.findOne(memberId);
@@ -88,7 +89,7 @@ public class MemberResource {
                 .map(MemberResponse::new).collect(Collectors.toList());
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-                .filterOutAllExcept("memberId", "name", "email");
+                .filterOutAllExcept("memberId", "realName", "email","name");
 
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("memberResp", filter);
 
@@ -103,9 +104,10 @@ public class MemberResource {
             @ApiResponse(code = 202, message = "수정 성공"),
             @ApiResponse(code = 400, message = "조건에 맞지 않는 폼 형식"),
             @ApiResponse(code = 401, message = "권한 없는 접근"),
-            @ApiResponse(code = 404, message = "존재하지 않음")
+            @ApiResponse(code = 404, message = "존재하지 않음"),
+            @ApiResponse(code = 410, message = "토큰 만료")
     })
-    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.PUT)
     public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated MemberUpdate memberUpdate
             , @PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
@@ -133,7 +135,7 @@ public class MemberResource {
             @ApiResponse(code = 401, message = "권한 없는 접근"),
             @ApiResponse(code = 404, message = "존재하지 않음")
     })
-    @ApiImplicitParam(name = "memberId",value = "회원 UUID")
+    @ApiImplicitParam(name = "memberId",value = "회원 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/members/{memberId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> delete(@PathVariable String memberId, @AuthenticationPrincipal @ApiIgnore Member member) {
         this.checkAuthentication(member, memberId);

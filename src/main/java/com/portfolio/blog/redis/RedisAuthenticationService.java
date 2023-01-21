@@ -78,6 +78,7 @@ public class RedisAuthenticationService {
     }
 
 
+
     /**
      * first token create
      *
@@ -101,6 +102,7 @@ public class RedisAuthenticationService {
 
     /**
      * access Token create
+     *
      * @param token
      * @return
      */
@@ -108,7 +110,7 @@ public class RedisAuthenticationService {
         String access = JWT.create().withSubject(token.getMemberId())
                 .withIssuer(token.getName())
                 .withArrayClaim("roles", token.getRoles().toArray(new String[0]))
-                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000)) // 15 minutes
+                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000)) // 15 min
                 .sign(Algorithm.HMAC256(secretKey.getBytes()));
         Map<String, String> accessToken = new HashMap<>();
         accessToken.put("access_token", access);
@@ -135,7 +137,6 @@ public class RedisAuthenticationService {
 
     /**
      * refresh Token create -> redis in
-     *
      * @param token
      */
     @Transactional
@@ -147,7 +148,7 @@ public class RedisAuthenticationService {
         }
         String refresh = JWT.create()
                 .withSubject(token.getMemberId())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 24 Hours
+                .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 1 minutes ? 24 Hours 24 * 60 * 60 * 1000
                 .sign(Algorithm.HMAC256(secretKey.getBytes()));
         redisRepo.saveRefresh(token.getMemberId(), refresh);
     }
@@ -158,7 +159,13 @@ public class RedisAuthenticationService {
     }
 
     public String decodeTokenGetIssuer(String token) {
-        return JWT.decode(token).getIssuer();
+        String issuer = JWT.require(Algorithm.HMAC256(secretKey.getBytes())).build().verify(token)
+                .getIssuer();
+        if (issuer == null) {
+            log.warn("issuer is null");
+        }
+        log.info(issuer);
+        return issuer;
     }
 
 }
