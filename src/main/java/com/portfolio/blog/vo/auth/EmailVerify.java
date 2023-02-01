@@ -1,4 +1,4 @@
-package com.portfolio.blog.vo;
+package com.portfolio.blog.vo.auth;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,7 +15,6 @@ public class EmailVerify {
     @ApiParam(value = "인증 이메일")
     @ApiModelProperty(example = "lsek@naver.com")
     @Email(message = "이메일 형식이어야 합니다.")
-    @NotBlank(message = "이메일을 입력해주세요.")
     private String email;
 
     @ApiParam(value = "인증 번호")

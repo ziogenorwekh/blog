@@ -1,5 +1,6 @@
 package com.portfolio.blog.domain;
 
+import com.portfolio.blog.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

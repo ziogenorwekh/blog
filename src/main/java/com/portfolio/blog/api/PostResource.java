@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.portfolio.blog.domain.Member;
-import com.portfolio.blog.domain.PostSearch;
+import com.portfolio.blog.domain.post.PostSearch;
 import com.portfolio.blog.dto.PostDto;
 import com.portfolio.blog.service.PostService;
-import com.portfolio.blog.vo.post.PostCreate;
+import com.portfolio.blog.vo.post.PostRequest;
 import com.portfolio.blog.vo.post.PostResponse;
-import com.portfolio.blog.vo.post.PostUpdate;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +44,9 @@ public class PostResource {
             @ApiResponse(code = 403, message = "카테고리 값 오류")
     })
     @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    public ResponseEntity<URI> create(@RequestBody @Validated PostCreate postCreate, @AuthenticationPrincipal @ApiIgnore Member member) {
+    public ResponseEntity<URI> create(@RequestBody @Validated PostRequest postRequest, @AuthenticationPrincipal @ApiIgnore Member member) {
 
-        Long id = postService.save(postCreate, member.getMemberId());
+        Long id = postService.save(postRequest, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
         return ResponseEntity.created(uri).build();
     }
@@ -110,7 +109,7 @@ public class PostResource {
     })
     @ApiImplicitParam(name = "postId",value = "글 UUID",dataTypeClass = String.class)
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
-    public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated PostUpdate postUpdate,
+    public ResponseEntity<MappingJacksonValue> update(@RequestBody @Validated PostRequest postUpdate,
                                                       @PathVariable String postId,
                                                       @AuthenticationPrincipal @ApiIgnore Member member) {
         PostSearch postSearch = new PostSearch(member.getMemberId(), postId);

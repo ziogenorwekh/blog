@@ -1,4 +1,4 @@
-package com.portfolio.blog.vo;
+package com.portfolio.blog.vo.auth;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,17 +1,15 @@
-package com.portfolio.blog.dto;
+package com.portfolio.blog.vo.activity;
 
-import com.portfolio.blog.domain.activity.Activity;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.portfolio.blog.domain.activity.Type;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * A DTO for the {@link Activity} entity
- */
+@JsonFilter("activity")
 @Data
-public class ActivityDto implements Serializable {
+public class ActivityResponse {
+
     private String activityId;
     private String name;
     private String story;

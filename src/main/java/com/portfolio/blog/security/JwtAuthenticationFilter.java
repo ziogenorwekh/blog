@@ -2,8 +2,7 @@ package com.portfolio.blog.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.blog.redis.RedisAuthenticationService;
-import com.portfolio.blog.vo.Login;
-import com.portfolio.blog.vo.Token;
+import com.portfolio.blog.vo.auth.Login;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +11,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -57,12 +52,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain chain, Authentication authResult)
-            throws IOException {
+                                            FilterChain chain, Authentication authResult) throws IOException {
         CustomizedMemberDetails memberDetails = (CustomizedMemberDetails) authResult.getPrincipal();
         String memberId = memberDetails.getMemberId();
+        String name = memberDetails.getUsername();
         Map<String, String> jwtServeToken = redisAuthenticationService.createToken(memberId);
         jwtServeToken.put("memberId", memberId);
+        jwtServeToken.put("name", name);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), jwtServeToken);
     }

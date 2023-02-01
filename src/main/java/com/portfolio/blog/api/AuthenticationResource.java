@@ -9,8 +9,7 @@ import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.redis.RedisAuthenticationService;
 import com.portfolio.blog.service.MemberService;
-import com.portfolio.blog.vo.EmailVerify;
-import com.portfolio.blog.vo.member.MemberCreate;
+import com.portfolio.blog.vo.auth.EmailVerify;
 import com.portfolio.blog.vo.member.MemberPwdUpdate;
 import com.portfolio.blog.vo.member.MemberResponse;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,17 +18,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.net.URI;
 import java.util.Map;
 
 @Slf4j
@@ -58,7 +53,6 @@ public class AuthenticationResource {
         return ResponseEntity.accepted().build();
     }
 
-
     @ApiOperation(value = "토큰 재발급", notes = "액세스 토큰을 재발급")
     @ApiResponses({
             @ApiResponse(code = 200, message = "재발급 성공"),
@@ -81,21 +75,6 @@ public class AuthenticationResource {
         redisAuthenticationService.deleteRefresh(member.getMemberId());
         return ResponseEntity.ok().build();
     }
-
-//    @ApiOperation(value = "회원가입", notes = "지정된 폼 형식에 맞는 회원 가입")
-//    @ApiResponses({
-//            @ApiResponse(code = 201, message = "회원가입 성공"),
-//            @ApiResponse(code = 400, message = "지정된 폼 형식에 맞지 않음")
-//    })
-//    @RequestMapping(value = "/members", method = RequestMethod.POST)
-//    public ResponseEntity<URI> createMember(@RequestBody @Validated MemberCreate memberCreate) {
-//
-////        Long id = method.save(null);
-//        memberService.save(memberCreate);
-////        redisAuthenticationService.
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
-//        return ResponseEntity.created(uri).build();
-//    }
 
 
     // 후에는 메일 인증으로 비밀번호 변경 예정

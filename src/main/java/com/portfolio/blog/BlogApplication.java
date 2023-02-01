@@ -1,17 +1,24 @@
 package com.portfolio.blog;
 
-import com.portfolio.blog.domain.Category;
+import com.portfolio.blog.domain.activity.Type;
+import com.portfolio.blog.domain.post.Category;
+import com.portfolio.blog.service.ActivityService;
 import com.portfolio.blog.service.MemberService;
 import com.portfolio.blog.service.PostService;
+import com.portfolio.blog.vo.activity.ActivityRequest;
 import com.portfolio.blog.vo.member.MemberCreate;
-import com.portfolio.blog.vo.member.MemberUpdate;
-import com.portfolio.blog.vo.post.PostCreate;
+import com.portfolio.blog.vo.post.PostRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import javax.annotation.PostConstruct;
+import java.util.Calendar;
+import java.util.Date;
 
+@Slf4j
 @SpringBootApplication
 public class BlogApplication {
 
@@ -27,10 +34,14 @@ public class BlogApplication {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private ActivityService activityService;
 
 
-//    @PostConstruct
+ // 프론트 꾸밀때 쓸거
+    @PostConstruct
     public void test() {
+        System.out.println();
         MemberCreate memberCreate = new MemberCreate();
         memberCreate.setEmail("myEmail@embeddedhello.com");
         memberCreate.setName("usernameZIOGENOR");
@@ -50,45 +61,88 @@ public class BlogApplication {
         memberService.testVerified(memberId1);
 
 
-//        WorkUrlCreate workUrlCreate = new WorkUrlCreate();
-//        workUrlCreate.setUrl("http://localohost/hello/portfolio");
+        PostRequest postRequest = new PostRequest();
+        postRequest.setCategory(Category.STUDY.name());
+        postRequest.setTitle("title");
+        postRequest.setContents("내용");
 
-//        memberService.saveWorkUrl(workUrlCreate, memberId);
+        postService.save(postRequest, memberId);
 
-        PostCreate postCreate = new PostCreate();
-        postCreate.setCategory(Category.STUDY.name());
-        postCreate.setTitle("title");
-        postCreate.setContents("내용");
+        PostRequest postRequest1 = new PostRequest();
+        postRequest1.setCategory(Category.STUDY.name());
+        postRequest1.setTitle("titlasdasde");
+        postRequest1.setContents("asqvasr내aseasasd용");
 
-        postService.save(postCreate, memberId);
+        postService.save(postRequest1, memberId);
 
-        PostCreate postCreate1 = new PostCreate();
-        postCreate1.setCategory(Category.STUDY.name());
-        postCreate1.setTitle("titlasdasde");
-        postCreate1.setContents("asqvasr내aseasasd용");
+        PostRequest postRequest2 = new PostRequest();
+        postRequest2.setCategory(Category.STUDY.name());
+        postRequest2.setTitle("titascase");
+        postRequest2.setContents("내qwtvsdgaetEWFC용");
 
-        postService.save(postCreate1, memberId);
+        postService.save(postRequest2, memberId);
 
-        PostCreate postCreate2 = new PostCreate();
-        postCreate2.setCategory(Category.STUDY.name());
-        postCreate2.setTitle("titascase");
-        postCreate2.setContents("내qwtvsdgaetEWFC용");
+        PostRequest postRequest3 = new PostRequest();
+        postRequest3.setCategory(Category.STUDY.name());
+        postRequest3.setTitle("titASDCFADCFASDFAEWle");
+        postRequest3.setContents("내FASDCFASDRAERACE용");
 
-        postService.save(postCreate2, memberId);
+        postService.save(postRequest3, memberId);
 
-        PostCreate postCreate3 = new PostCreate();
-        postCreate3.setCategory(Category.STUDY.name());
-        postCreate3.setTitle("titASDCFADCFASDFAEWle");
-        postCreate3.setContents("내FASDCFASDRAERACE용");
+        PostRequest postRequest4 = new PostRequest();
+        postRequest4.setCategory(Category.WORK.name());
+        postRequest4.setTitle("작업물");
+        postRequest4.setContents("내용내뇽");
 
-        postService.save(postCreate3, memberId);
+        postService.save(postRequest4, memberId);
 
-        PostCreate postCreate4 = new PostCreate();
-        postCreate4.setCategory(Category.WORK.name());
-        postCreate4.setTitle("작업물");
-        postCreate4.setContents("내용내뇽");
+        ActivityRequest activityRequest = new ActivityRequest();
+        activityRequest.setName("Java");
+        activityRequest.setType("KNOWLEDGE");
+        activityService.save(activityRequest, memberId);
 
-        postService.save(postCreate4, memberId);
+
+        ActivityRequest activityRequest1 = new ActivityRequest();
+        activityRequest1.setName("Spring");
+        activityRequest1.setType(Type.KNOWLEDGE.name());
+        activityService.save(activityRequest1, memberId);
+
+        ActivityRequest activityRequest2 = new ActivityRequest();
+        activityRequest2.setName("Jpa");
+        activityRequest2.setType(Type.KNOWLEDGE.name());
+        activityService.save(activityRequest2, memberId);
+
+        ActivityRequest activityRequest3 = new ActivityRequest();
+        activityRequest3.setType(Type.CAREER.name());
+        activityRequest3.setName("Naver");
+        activityRequest3.setStartPeriod(setDate(2021,4,3));
+        activityRequest3.setEndPeriod(setDate(2022,8,2));
+        activityRequest3.setStory("I worked at Naver.");
+        activityService.save(activityRequest3, memberId);
+
+        ActivityRequest ac = new ActivityRequest();
+        ac.setType(Type.CAREER.name());
+        ac.setName("Toss");
+        ac.setStartPeriod(setDate(2019,4,4));
+        ac.setEndPeriod(setDate(2021,4,1));
+        ac.setStory("I worked at Toss. it's very nice company!!");
+        activityService.save(ac, memberId);
+
+
+        ActivityRequest activityRequest4 = new ActivityRequest();
+        activityRequest4.setType(Type.EDUCATION.name());
+        activityRequest4.setName("university");
+        activityRequest4.setStartPeriod(setDate(2017,3,1));
+        activityRequest4.setEndPeriod(setDate(2021,7,2));
+        activityRequest4.setStory("I studied at ~University.");
+        activityService.save(activityRequest4,memberId);
+
+    }
+
+    private static Date setDate(int y,int m, int d) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(y, m-1, d);
+        return new Date(cal.getTimeInMillis());
     }
 
 }

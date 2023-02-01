@@ -35,8 +35,8 @@ public class RedisRepo {
             this.delete(key);
         }
 //        Duration expireDuration = Duration.ofDays(1L);
-        Duration expireDuration = Duration.ofSeconds(60L);
-
+//        Duration expireDuration = Duration.ofSeconds(5*60L);
+        Duration expireDuration = Duration.ofMinutes(5L);
         valueOperations.set(key, value,expireDuration);
     }
 

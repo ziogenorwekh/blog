@@ -1,23 +1,23 @@
 package com.portfolio.blog.domain.activity;
 
-import com.portfolio.blog.domain.Category;
 import lombok.Getter;
 
+import java.util.Locale;
 import java.util.Optional;
 
 public enum Type {
-    EDUCATION("education"),CAREER("career"),KNOWLEDGE("knowledge");
+    EDUCATION("EDUCATION"),CAREER("CAREER"),KNOWLEDGE("KNOWLEDGE");
 
     @Getter
-    private final String value;
+    private final String typeValue;
 
-    Type(String value) {
-        this.value = value;
+    Type(String typeValue) {
+        this.typeValue = typeValue;
     }
 
-    public static Optional<Type> from(String value) {
+    public static Optional<Type> from(String typeValue) {
         for (Type type : Type.values()) {
-            if (type.getValue().equals(value)) {
+            if (type.getTypeValue().equals(typeValue)) {
                 return Optional.of(type);
             }
         }

@@ -1,8 +1,7 @@
 package com.portfolio.blog.dto;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.portfolio.blog.domain.Category;
+import com.portfolio.blog.domain.post.Category;
+import com.portfolio.blog.domain.post.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * A DTO for the {@link com.portfolio.blog.domain.Post} entity
+ * A DTO for the {@link Post} entity
  */
 @Data
 @NoArgsConstructor

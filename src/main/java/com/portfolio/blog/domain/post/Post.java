@@ -1,17 +1,14 @@
-package com.portfolio.blog.domain;
+package com.portfolio.blog.domain.post;
 
-import com.portfolio.blog.vo.post.PostCreate;
-import com.portfolio.blog.vo.post.PostUpdate;
+import com.portfolio.blog.domain.Member;
+import com.portfolio.blog.vo.post.PostRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -52,11 +49,11 @@ public class Post {
     }
 
     // Business Logic
-    public static Post create(PostCreate postCreate, Member member) {
+    public static Post create(PostRequest postRequest, Member member) {
         Post post = Post.builder()
-                .title(postCreate.getTitle())
-                .contents(postCreate.getContents())
-                .category(Category.from(postCreate.getCategory()).get())
+                .title(postRequest.getTitle())
+                .contents(postRequest.getContents())
+                .category(Category.from(postRequest.getCategory()).get())
                 .build();
         post.addMember(member);
         return post;
@@ -68,7 +65,7 @@ public class Post {
     }
 
 
-    public void update(PostUpdate postUpdate) {
+    public void update(PostRequest postUpdate) {
         this.title = postUpdate.getTitle();
         this.contents = postUpdate.getContents();
         this.category = Category.from(postUpdate.getCategory()).get();

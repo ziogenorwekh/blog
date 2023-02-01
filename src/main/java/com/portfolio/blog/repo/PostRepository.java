@@ -1,8 +1,8 @@
 package com.portfolio.blog.repo;
 
-import com.portfolio.blog.domain.Category;
+import com.portfolio.blog.domain.post.Category;
 import com.portfolio.blog.domain.Member;
-import com.portfolio.blog.domain.Post;
+import com.portfolio.blog.domain.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

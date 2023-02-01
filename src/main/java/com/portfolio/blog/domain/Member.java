@@ -2,6 +2,7 @@ package com.portfolio.blog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.portfolio.blog.domain.activity.Activity;
+import com.portfolio.blog.domain.post.Post;
 import com.portfolio.blog.exception.PasswordNotMatchedException;
 import com.portfolio.blog.vo.member.MemberCreate;
 import com.portfolio.blog.vo.member.MemberPwdUpdate;
@@ -66,7 +67,6 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Activity> activities = new ArrayList<>();
-
 
 
     @Builder

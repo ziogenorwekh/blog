@@ -33,7 +33,11 @@ public class Activity {
     @Lob
     private String story;
 
-    private Date period;
+    @Temporal(value = TemporalType.DATE)
+    private Date startPeriod;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date endPeriod;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -41,11 +45,12 @@ public class Activity {
 
 
     @Builder
-    public Activity(String name, String story, Date period, Type activityType) {
+    public Activity(String name, String story, Date startPeriod,Date endPeriod, Type activityType) {
         this.activityId = UUID.randomUUID().toString();
         this.name = name;
         this.story = story;
-        this.period = period;
+        this.startPeriod = startPeriod;
+        this.endPeriod = endPeriod;
         this.activityType = activityType;
     }
 
@@ -59,7 +64,8 @@ public class Activity {
         Type type = typeOptional.orElseThrow(() -> new TypeNotMatchingException("type is not matched."));
         Activity activity = Activity.builder().name(activityRequest.getName())
                 .story(activityRequest.getStory())
-                .period(activityRequest.getPeriod())
+                .startPeriod(activityRequest.getStartPeriod())
+                .endPeriod(activityRequest.getEndPeriod())
                 .activityType(type).build();
         activity.addMember(member);
         return activity;
@@ -70,7 +76,8 @@ public class Activity {
         Type type = typeOptional.orElseThrow(() -> new TypeNotMatchingException("type is not matched."));
         this.name = activityRequest.getName();
         this.story = activityRequest.getStory();
-        this.period = activityRequest.getPeriod();
+        this.startPeriod = activityRequest.getStartPeriod();
+        this.endPeriod = activityRequest.getEndPeriod();
         this.activityType = type;
     }
 

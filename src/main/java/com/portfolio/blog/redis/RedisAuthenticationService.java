@@ -2,14 +2,13 @@ package com.portfolio.blog.redis;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.portfolio.blog.domain.Member;
 import com.portfolio.blog.domain.Role;
 import com.portfolio.blog.exception.EmailAuthenticationException;
 import com.portfolio.blog.exception.MemberNotFoundException;
 import com.portfolio.blog.exception.RefreshTokenNotFoundException;
 import com.portfolio.blog.repo.MemberRepository;
-import com.portfolio.blog.vo.Token;
+import com.portfolio.blog.vo.auth.Token;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

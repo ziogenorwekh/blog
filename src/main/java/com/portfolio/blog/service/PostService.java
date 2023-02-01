@@ -1,9 +1,9 @@
 package com.portfolio.blog.service;
 
-import com.portfolio.blog.domain.Category;
+import com.portfolio.blog.domain.post.Category;
 import com.portfolio.blog.domain.Member;
-import com.portfolio.blog.domain.Post;
-import com.portfolio.blog.domain.PostSearch;
+import com.portfolio.blog.domain.post.Post;
+import com.portfolio.blog.domain.post.PostSearch;
 import com.portfolio.blog.dto.PostDto;
 import com.portfolio.blog.exception.CategoryNotMatchingException;
 import com.portfolio.blog.exception.MemberNotFoundException;
@@ -11,15 +11,13 @@ import com.portfolio.blog.exception.PostNotFoundException;
 import com.portfolio.blog.exception.UnAuthenticationAccessException;
 import com.portfolio.blog.repo.MemberRepository;
 import com.portfolio.blog.repo.PostRepository;
-import com.portfolio.blog.vo.post.PostCreate;
-import com.portfolio.blog.vo.post.PostUpdate;
+import com.portfolio.blog.vo.post.PostRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,11 +28,11 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public Long save(PostCreate postCreate, String memberId) {
-        this.validatedCategory(postCreate.getCategory());
+    public Long save(PostRequest postRequest, String memberId) {
+        this.validatedCategory(postRequest.getCategory());
         Member member = memberRepository.findMemberByMemberId(memberId)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));
-        Post post = Post.create(postCreate, member);
+        Post post = Post.create(postRequest, member);
         postRepository.save(post);
         return post.getId();
     }
@@ -72,7 +70,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto update(PostUpdate postUpdate, PostSearch postSearch) {
+    public PostDto update(PostRequest postUpdate, PostSearch postSearch) {
         this.validatedCategory(postUpdate.getCategory());
         Post post = this.checkOwnPost(postSearch);
         post.update(postUpdate);

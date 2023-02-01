@@ -1,4 +1,4 @@
-package com.portfolio.blog.domain;
+package com.portfolio.blog.domain.post;
 
 
 import lombok.Getter;
