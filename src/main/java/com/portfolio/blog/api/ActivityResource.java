@@ -25,6 +25,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.net.URI;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ActivityResource {
     })
     @RequestMapping(value = "/activities", method = RequestMethod.POST)
     public ResponseEntity<URI> create(@RequestBody @Validated ActivityRequest activityRequest,
-                                      @AuthenticationPrincipal Member member) {
+                                      @AuthenticationPrincipal @ApiIgnore Member member) {
 
         String id = activityService.save(activityRequest, member.getMemberId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();

@@ -26,7 +26,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private final AuthenticationManager authenticationManager;
-    //    private final JwtServe jwtServe;
     private final RedisAuthenticationService redisAuthenticationService;
 
     @Override

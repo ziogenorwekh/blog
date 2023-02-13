@@ -40,7 +40,8 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostDto findOne(String postId) {
-        Post post = postRepository.findPostByPostId(postId).orElseThrow(() -> new PostNotFoundException("post not in database"));
+        Post post = postRepository.findPostByPostId(postId)
+                .orElseThrow(() -> new PostNotFoundException("post not in database"));
         return new ModelMapper().map(post, PostDto.class);
     }
 

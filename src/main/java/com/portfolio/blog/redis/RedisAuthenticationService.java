@@ -50,13 +50,13 @@ public class RedisAuthenticationService {
         log.debug("sendAuthenticationTest email :: {}", email);
         memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException("member not in database"));
-        String number = "";
+        StringBuilder number = new StringBuilder();
         for (int i = 0; i < 6; i++) {
             int random = (int) (Math.random() * 10);
-            number += random;
+            number.append(random);
         }
-        redisRepo.save(number, email, 60 * 5L);
-        this.sendMail(email, "회원 가입 인증 번호", number);
+        redisRepo.save(number.toString(), email, 60 * 5L);
+        this.sendMail(email, "회원 가입 인증 번호", number.toString());
     }
 
     // 수정해야 됌

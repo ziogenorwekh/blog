@@ -38,4 +38,5 @@ public class ActivityRequest {
     @ApiParam(value = "교육인지, 학습인지, 지식 정보에 대한 타입 지정", required = true)
     @ApiModelProperty(example = "Education")
     private String type;
+
 }

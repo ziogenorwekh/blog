@@ -48,10 +48,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        log.debug("doFilterInternal");
         String header = request.getHeader(AUTHORIZATION);
         log.debug(request.getMethod());
-
         // 수정해야 됌
         if (header == null || !header.startsWith("Bearer ") || request.getServletPath().equals("/login")
                 || request.getServletPath().equals("/api/fresh") || request.getMethod().equals(HttpMethod.GET)) {
@@ -69,11 +67,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         chain.doFilter(request, response);
     }
 
-
     private Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("getAuthentication");
         String jwtHeader = request.getHeader(AUTHORIZATION).substring("Bearer ".length());
-        log.debug("jwtHeader :: {}", jwtHeader);
+//        log.debug("jwtHeader :: {}", jwtHeader);
         CustomizedMemberDetails memberDetails;
         UsernamePasswordAuthenticationToken authenticationToken = null;
         try {

@@ -139,7 +139,8 @@ public class PostResource {
     private MappingJacksonValue getOneMappingJacksonValue(PostResponse postResponse) {
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter
-                .filterOutAllExcept("postId", "contents", "subTitle", "title", "postedBy", "postMember", "category");
+                .filterOutAllExcept("postId", "contents", "subTitle", "title",
+                        "postedBy", "postMember", "category","memberId");
 
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("postResp", filter);
 

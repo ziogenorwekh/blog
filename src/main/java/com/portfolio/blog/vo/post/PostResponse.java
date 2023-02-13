@@ -33,6 +33,10 @@ public class PostResponse {
     @ApiModelProperty(example = "lsek")
     private String postMember;
 
+    @ApiParam(value = "작성 회원 UUID")
+    @ApiModelProperty(example = "uuid.tostring()")
+    private String memberId;
+
     public PostResponse(PostDto postDto) {
         this.postId = postDto.getPostId();
         this.title = postDto.getTitle();
@@ -40,5 +44,6 @@ public class PostResponse {
         this.postedBy = postDto.getPostedBy();
         this.postMember = postDto.getMember().getName();
         this.category = postDto.getCategory().name();
+        this.memberId = postDto.getMember().getMemberId();
     }
 }
